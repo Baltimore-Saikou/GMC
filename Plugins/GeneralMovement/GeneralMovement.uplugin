@@ -1,0 +1,32 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0.0",
+	"FriendlyName": "General Movement",
+	"Description": "GMC framework providing classes and utility for creating replicated server-authoritative movement systems with automatic client-side prediction & replay, lag compensation and pawn interpolation. Also includes an advanced character movement implementation supporting all collision shapes, Steam integration and a UI back end for hosting and joining online sessions.",
+	"Category": "GRIMTEC",
+	"CreatedBy": "Dominik Scherer",
+	"CreatedByURL": "",
+	"DocsURL": "https://youtube.com/playlist?list=PLUYBthaeEmJtsIu81Et9mVLIde9xVx9nR",
+	"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/product/0a128683c41f4b59906c661b95ca8655",
+	"SupportURL": "https://discord.gg/G37j8JHkMz",
+	"EngineVersion": "4.27.0",
+	"CanContainContent": false,
+	"Installed": true,
+	"Modules": [
+		{
+			"Name": "GeneralMovement",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"WhitelistPlatforms": [
+				"Win64"
+			]
+		}
+	],
+	"Plugins": [
+		{
+			"Name": "OnlineSubsystemSteam",
+			"Enabled": true
+		}
+	]
+}
