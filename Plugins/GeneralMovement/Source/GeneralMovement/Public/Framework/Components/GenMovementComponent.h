@@ -173,29 +173,35 @@ struct GMC_API FFloorParams
 
 protected:
 
-  UPROPERTY(BlueprintReadOnly, Category = "General Movement Component")
-  // The shape trace hit result.
-  FHitResult ShapeHitResult;
+	UPROPERTY(BlueprintReadOnly, Category = "General Movement Component")
+	// The shape trace hit result.
+	// 形状跟踪命中结果。
+	FHitResult ShapeHitResult;
 
-  UPROPERTY(BlueprintReadOnly, Category = "General Movement Component")
-  // The line trace hit result.
-  FHitResult LineHitResult;
+	UPROPERTY(BlueprintReadOnly, Category = "General Movement Component")
+	// The line trace hit result.
+	// 线性检测命中结果。
+	FHitResult LineHitResult;
 
-  UPROPERTY(BlueprintReadOnly, Category = "General Movement Component")
-  // The distance of the pawn's lower bound to the floor based on the shape trace (will be -1 if not valid).
-  float ShapeDistanceToFloor{-1.f};
+	UPROPERTY(BlueprintReadOnly, Category = "General Movement Component")
+	// The distance of the pawn's lower bound to the floor based on the shape trace (will be -1 if not valid).
+	// 基于形状轨迹的 pawn 下界到地板的距离（如果无效，则为 -1）。
+	float ShapeDistanceToFloor{-1.f};
 
-  UPROPERTY(BlueprintReadOnly, Category = "General Movement Component")
-  // The distance of the pawn's lower bound to the floor based on the line trace (will be -1 if not valid).
-  float LineDistanceToFloor{-1.f};
+	UPROPERTY(BlueprintReadOnly, Category = "General Movement Component")
+	// The distance of the pawn's lower bound to the floor based on the line trace (will be -1 if not valid).
+	// 基于线性检测的 pawn 下界到地板的距离（如果无效，则为 -1）。
+	float LineDistanceToFloor{-1.f};
 
-  UPROPERTY(BlueprintReadOnly, Category = "General Movement Component")
-  // The 2D distance from the center of the pawn to the impact point of the shape trace (will be -1 if not valid).
-  float DistanceToImpact{-1.f};
+	UPROPERTY(BlueprintReadOnly, Category = "General Movement Component")
+	// The 2D distance from the center of the pawn to the impact point of the shape trace (will be -1 if not valid).
+	// 从 pawn 的中心到形状轨迹的撞击点的 2D 距离（如果无效，则为 -1）。
+	float DistanceToImpact{-1.f};
 
-  UPROPERTY()
-  // True if the struct was initialized with some form of data.
-  bool bHasData{false};
+	UPROPERTY()
+	// True if the struct was initialized with some form of data.
+	// 如果结构是用某种形式的数据初始化的，则为真。
+	bool bHasData{false};
 };
 
 // General accessor for any type of class member. Useful for modifying variables or calling functions of engine classes that are access
@@ -350,6 +356,8 @@ public:
   /// Returns the number of the current iteration of a move execution. Only relevant in the context of physics sub-stepping. Usually there
   /// is only 1 iteration to be executed but if the delta time of the move exceeds @see UGenMovementReplicationComponent::MaxTimeStep the
   /// move will be broken down into 2 or more iterations.
+  /// 返回移动执行的当前迭代次数。仅与物理分步相关。
+  /// 通常只需执行一次迭代，但如果移动的增量时间超过@see UGenMovementReplicationComponent:：MaxTimeStep，则移动将分解为两次或更多次迭代。
   ///
   /// @returns      int32    The number of the iteration that currently being executed. This can be between 1 for the first iteration and
   ///                        @see UGenMovementReplicationComponent::MaxIterations (inclusive).
@@ -673,11 +681,16 @@ public:
   /// movement component assumes for all calculations. Does not operate (i.e. always returns true) in shipping and test builds which is why
   /// you should never use this check to branch on essential logic, it is merely intended to verify the root component setup.
   ///
+  /// 检查 pawn 的根组件是否是受支持的碰撞形状类型的 UShapeComponent 且没有缩放。 这是所有计算的一般运动分量所假定的。
+  /// 不能在发布和测试版本中运行（即始终返回 true），这就是为什么您不应该使用此检查来分支基本逻辑，它仅用于验证根组件设置。
+  ///
   /// @returns      bool    True if the root component is a supported collision shape, false otherwise.
+  ///						如果根组件是受支持的碰撞形状，则为 true，否则为 false。
   UFUNCTION(BlueprintCallable, Category = "General Movement Component")
   virtual bool HasValidRootCollision() const;
 
   /// Query the collision shape of the pawn.
+  /// 查询pawn的碰撞形状。
   ///
   /// @returns      EGenCollisionShape    The shape of the pawn's root collision.
   UFUNCTION(BlueprintCallable, Category = "General Movement Component")
@@ -712,10 +725,12 @@ public:
   /// HorizontalCapsule = (Radius, Radius, HalfHeight)
   /// Box               = (HalfExtentX, HalfExtentY, HalfExtentZ)
   /// Sphere            = (Radius, Radius, Radius)
-  /// @attention Keep in mind that the actual height (along the Z-axis) of an un-rotated horizontal capsule is determined by the radius, not
-  /// by the value of the HalfHeight member.
+  /// @attention Keep in mind that the actual height (along the Z-axis) of an un-rotated horizontal capsule is determined by the radius, not by the value of the HalfHeight member.
+  ///			 请记住，未旋转的水平胶囊的实际高度（沿 Z 轴）由半径决定，而不是由 HalfHeight 成员的值决定。
+  /// 
   /// @note Although it would be more logical for flat capsules to have the radius as Z-component, we don't do it this way due to the manner
   /// in which FCollisionShape handles the extent vector and for easier interaction with existing engine functions.
+  /// 虽然平面胶囊将半径作为 Z 分量更合乎逻辑，但由于 FCollisionShape 处理范围矢量的方式以及与现有引擎函数的交互更容易，我们不会这样做。
   ///
   /// @returns      FVector    The extent of the root collision.
   UFUNCTION(BlueprintCallable, Category = "General Movement Component")
@@ -723,12 +738,15 @@ public:
 
   /// Returns the half height of the root component. This is the extent in Z direction of the collision's default position (not rotated),
   /// and not necessarily the same as the "HalfHeight" property of a capsule (e.g. for a horizontal capsule this is the radius).
+  /// 返回根组件的半高。 这是碰撞默认位置（未旋转）在 Z 方向的范围，不一定与胶囊的“HalfHeight”属性相同（例如，对于水平胶囊，这是半径）。
   ///
   /// @returns      float    The half height of the un-rotated root collision in Z direction.
+  ///						 Z 方向上未旋转的根碰撞的半高。
   UFUNCTION(BlueprintCallable, Category = "General Movement Component")
   virtual float GetRootCollisionHalfHeight() const;
 
   /// Returns the half height of the vertical portion of the root collision (0 for horizontal capsules and spheres).
+  /// 返回根碰撞垂直部分的半高（水平胶囊和球体为 0）。
   ///
   /// @returns      float    The half height of the vertical portion of the collision.
   UFUNCTION(BlueprintCallable, Category = "General Movement Component")
@@ -1072,27 +1090,37 @@ public:
   static FVector CalculateAirResistance(const FVector& CurrentVelocity, float DragCoefficient);
 
   /// Calculates the opposing force to the passed velocity cause by rolling resistance.
+  /// 计算由滚动阻力引起的对通过速度的反作用力。
   ///
   /// @param        CurrentVelocity       The current velocity in m/s.
-  /// @param        Mass                  The mass of the pawn in kg.
+  /// @param        PawnMass              The mass of the pawn in kg.
   /// @param        GravityZ              The gravity Z-component in m/s^2.
   /// @param        RollingCoefficient    The rolling resistance coefficient.
+  ///									  滚动阻力系数。
   /// @returns      FVector               The force opposing the current velocity in N.
+  ///									  与当前速度相反的力，单位为 N。
   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "General Movement Component")
   static FVector CalculateRollingResistance(const FVector& CurrentVelocity, float PawnMass, float GravityZ, float RollingCoefficient);
 
   /// Returns the normal of the plane defined by the passed direction and the world up-vector.
+  /// 返回由传递的方向和世界向上矢量定义的平面的法线。
   ///
   /// @param        Direction    The direction (does not need to be normalized).
+  ///							 方向（不需要归一化）。
   /// @returns      FVector      The cross product of the direction and the world up-vector.
+  ///							 方向和世界向上向量的叉积。
   UFUNCTION(BlueprintCallable, BlueprintPure, Category = "General Movement Component")
   static FVector GetPlaneNormalWithWorldZ(const FVector& Direction);
 
   /// Does a shape trace of the current root collision downward to update the floor parameters.
+  /// 向下跟踪当前根碰撞的形状以更新地板参数。
   ///
   /// @param        Floor          The floor parameters to update.
+  ///							   要更新的地板参数。
   /// @param        TraceLength    The length of the trace.
+  ///							   射线的长度。
   /// @returns      bool           If false, the pawn's position was adjusted (when the initial sweep started in penetration).
+  ///							   如果为 false，则调整 pawn 的位置（当初始扫描开始于穿透时）。
   UFUNCTION(BlueprintCallable, Category = "General Movement Component")
   virtual bool UpdateFloor(UPARAM(ref) FFloorParams& Floor, float TraceLength);
 
@@ -1263,15 +1291,24 @@ public:
   /// in the next tick to drive the montage further. The function allocates a new montage with each call so all montage data should be reset
   /// before montages are stepped again in the next tick (@see ResetMontages). This will also enforce frame independency for any other
   /// montage related data in the anim instance (important for client replay).
+  /// 在传球位置播放蒙太奇。 适合在复制刻度函数中使用。 在网络环境中，“Position”和“Weight”的输入可以绑定到成员变量并在网格姿势被勾选后更新。
+  /// 然后可以在下一个刻度中使用这些值来进一步推动蒙太奇。
+  /// 该函数为每次调用分配一个新的蒙太奇，因此所有蒙太奇数据都应在下一个滴答中再次步进蒙太奇之前重置（@see ResetMontages）。
+  /// 这还将强制动画实例中任何其他蒙太奇相关数据的帧独立性（对于客户端回放很重要）。
+  /// 
   /// @attention For Blueprint users: Unlike the built-in "PlayMontage" node this is not a latent action so the function needs to be called
   /// each tick with the advanced position and weight if the montage should play continuously.
+  /// @attention 蓝图用户：与内置的“PlayMontage”节点不同，这不是潜在动作，因此如果蒙太奇应该连续播放，则需要在每个刻度上调用高级位置和权重的函数。
+  /// 
   /// @attention This function sets up a montage for play with the appropriate values but montages are only actually stepped when the mesh
   /// pose is ticked.
+  /// @attention 此函数设置蒙太奇以使用适当的值进行播放，但蒙太奇仅在网格姿势被勾选时才会实际步进。
   ///
   /// @param        Mesh        The skeletal mesh of the owning pawn.
   /// @param        Montage     The montage to play.
   /// @param        Position    The position to play at in the montage. Must be >= 0 and < montage length for the montage to be stepped.
   /// @param        Weight      The blended value of the montage's alpha blend. Will be clamped to a min value of 0 and a max value of 1.
+  ///                           蒙太奇的 alpha 混合的混合值。 将被限制为最小值 0 和最大值 1。
   /// @param        PlayRate    The rate at which the montage should advance. Must be greater than 0.
   /// @returns      bool        True if the montage will be stepped (i.e. is playing), false otherwise.
   UFUNCTION(BlueprintCallable, Category = "General Movement Component")
@@ -1425,6 +1462,7 @@ private:
   /// The location of the updated component at the beginning of the current update.
   FVector Location0{0};
   /// Info about the floor that is currently located underneath the pawn.
+  /// 有关当前位于棋子下方的地板的信息。
   FFloorParams CurrentFloor;
   /// The number of the current move iteration.
   int32 MoveIteration{0};

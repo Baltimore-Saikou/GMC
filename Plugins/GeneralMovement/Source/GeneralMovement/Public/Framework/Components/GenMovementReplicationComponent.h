@@ -2424,21 +2424,30 @@ protected:
   /// replicated from client to server, whereas the other data is just calculated within the tick function as a result of that input and is
   /// replicated from server to client. Input flags always force a net update upon changing and are never replicated back to the autonomous
   /// proxy.
+  /// 输入标志的处理方式不同于其他预复制的数据，因为它们代表从客户端复制到服务器的实际（物理）用户输入，
+  /// 而其他数据只是在tick函数中作为该输入的结果进行计算，并从服务器复制到客户端。输入标志总是在更改时强制进行网络更新，并且永远不会复制回自治代理。
+  /// 
   /// @attention At the time of binding Blueprint variables are not initialized yet (meaning you should not pass editor properties as
   /// function arguments).
+  /// 在绑定Blueprint变量时，还没有初始化(这意味着您不应该将编辑器属性作为函数参数传递)。
   ///
   /// @param        ActionName                    The name of the input action that should be bound to the data member.
+  ///                                             应该绑定到数据成员的输入操作的名称。
   /// @param        VariableToBind                The variable to bind to an input flag.
+  ///                                             要绑定到输入标志的变量。
   /// @param        bReplicateToSimulatedProxy    Whether the bound variable should be replicated to simulated proxies. Usually this should
   ///                                             only be true for variables that trigger animations that remote clients should also be
   ///                                             able to see. Also affects smoothed listen server pawns in the same way.
+  ///                                             绑定变量是否应复制到模拟代理。 通常这应该只适用于触发远程客户端也应该能够看到的动画的变量。
+  ///                                             也以相同的方式影响平滑的监听服务器棋子。
   /// @param        bNoMoveCombine                Whether this input flag should always cause a new move to be enqueued while it is set
   ///                                             (only relevant for autonomous proxies).
+  ///                                             此输入标志是否应始终在设置时导致新移动排队（仅与自治代理相关）。
   /// @returns      void
 public:
 
   UFUNCTION(BlueprintCallable, Category = "General Movement Component", meta = (DisplayName = "BindInputFlag",
-    ToolTip = "Bind a boolean value to the input action with the specified name. The flag will be set while the input is being triggered."))
+    ToolTip = "Bind a boolean value to the input action with the specified name. The flag will be set while the input is being triggered.\n将布尔值绑定到具有指定名称的输入操作。 该标志将在输入被触发时设置。"))
   void K2_BindInputFlag(
     FName ActionName,
     UPARAM(ref) bool& VariableToBind,
@@ -2479,18 +2488,32 @@ protected:
   /// additional implementation by the user. They will not be sent from client to server, but the server will replicate them to clients
   /// according to the configuration. As a general guideline the autonomous proxy should have all bound members replicated (for replays),
   /// whereas simulated proxies can have them replicated as required (usually for animation purposes).
+  /// 这里提供的变量可以通过绑定函数绑定到用户定义的成员。
+  /// 绑定值由复制组件自动处理，这意味着它们可以在Tick之间进行移动组合、重放和转移，而无需用户进行任何额外的实现。
+  /// 它们不会从客户端发送到服务器，但服务器会根据配置将它们复制到客户端。
+  /// 作为一般准则，自治代理应该复制所有绑定成员（用于重播），而模拟代理可以根据需要复制它们（通常用于动画目的）。
+  /// 
   /// @attention Any members that are not bound to one of these variables should not carry over data between ticks or be move-combined.
+  ///            任何未绑定到这些变量之一的成员不应在Tick之间传递数据或进行移动组合。
   /// @attention Do not modify bound data members outside of the replicated tick.
+  ///            不要在复制的Tick之外修改绑定的数据成员。
   ///***************************************************************************************************************************************
 
   /// Extendable binding interface for Blueprint.
+  /// 蓝图的可扩展绑定接口。
+  /// 
   /// @attention At the time of binding Blueprint variables are not initialized yet (meaning you should not pass editor properties as
   /// function arguments).
+  /// 在绑定Blueprint变量时，还没有初始化(这意味着您不应该将编辑器属性作为函数参数传递)。
+  /// 
   /// @attention Binding a variable and setting both "bReplicateToAutonomousProxy" and "bReplicateToSimulatedProxy" to false does not have
   /// the same effect as not binding the variable at all. Binding integrates the data member into many internal processes and there are more
   /// advanced use cases where certain optimizations can be done by binding a variable but not replicating it.
+  /// 绑定变量并将“bReplicateToAutonomousProxy”和“bReplicateToSimulatedProxy”都设置为 false 与根本不绑定变量的效果不同。
+  /// 绑定将数据成员集成到许多内部流程中，并且有更高级的用例可以通过绑定变量而不是复制变量来完成某些优化。
   ///
   /// @param        VariableToBind                 The variable to bind to the pre-replicated data type.
+  ///                                              要绑定到预复制数据类型的变量。
   /// @param        bReplicateToAutonomousProxy    Whether the bound variable should be replicated to the autonomous proxy. Save for some
   ///                                              advanced cases, this should generally be set to true because bound variables are usually
   ///                                              required for the client replay.

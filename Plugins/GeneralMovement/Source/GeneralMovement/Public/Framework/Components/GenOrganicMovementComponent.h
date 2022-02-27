@@ -196,6 +196,7 @@ protected:
   UPROPERTY(BlueprintReadWrite, Category = "General Movement Component")
   /// Holds information about the floor currently located underneath the pawn. Note that the pawn does not necessarily have to be grounded
   /// for this to be valid (@see FloorTraceLength).
+  /// 保存当前位于Pawn下方的地板信息。
   FFloorParams CurrentFloor;
 
   UPROPERTY(BlueprintReadWrite, Category = "General Movement Component")
@@ -1365,6 +1366,7 @@ public:
 
   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement", AdvancedDisplay, meta = (ClampMin = "0.0001", UIMin = "1"))
   /// How far downwards the trace should go when updating the floor.
+  /// 射线检测的长度
   float FloorTraceLength{500.f};
 
   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement", AdvancedDisplay, meta = (ClampMin = "0", UIMin = "0"))

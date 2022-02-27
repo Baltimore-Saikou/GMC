@@ -784,18 +784,25 @@ float UGenMovementComponent::GetRootCollisionHalfHeight() const
 
 float UGenMovementComponent::GetRootCollisionOuterHalfHeight() const
 {
-  if (!HasValidRootCollision()) return 0.f;
-  const FVector Extent = GetRootCollisionExtent();
-  switch (UGenMovementComponent::GetRootCollisionShape())
-  {
-    case EGenCollisionShape::VerticalCapsule: return Extent.Z/*HalfHeight*/ - Extent.X/*Radius*/;
-    case EGenCollisionShape::Box: return Extent.Z;
-    case EGenCollisionShape::HorizontalCapsule:
-    case EGenCollisionShape::Sphere: return 0.f;
-    default: checkNoEntryGMC();
-  }
-  checkNoEntryGMC()
-  return 0.f;
+	if (!HasValidRootCollision())
+		return 0.f;
+	
+	const FVector Extent = GetRootCollisionExtent();
+	switch (UGenMovementComponent::GetRootCollisionShape())
+	{
+		case EGenCollisionShape::VerticalCapsule:
+			return Extent.Z/*HalfHeight*/ - Extent.X/*Radius*/;
+		case EGenCollisionShape::Box:
+			return Extent.Z;
+		case EGenCollisionShape::HorizontalCapsule:
+			return 0.f;
+		case EGenCollisionShape::Sphere:
+			return 0.f;
+		default:
+			checkNoEntryGMC();
+	}
+	checkNoEntryGMC()
+	return 0.f;
 }
 
 float UGenMovementComponent::GetRootCollisionWidth(const FVector& Direction) const
