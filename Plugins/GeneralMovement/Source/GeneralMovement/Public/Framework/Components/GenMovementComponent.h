@@ -147,7 +147,8 @@ struct GMC_API FFloorParams
     bHasData = false;
   }
 
-  // Returns true if the struct currently holds a valid shape trace hit.
+	// Returns true if the struct currently holds a valid shape trace hit.
+	// 如果结构当前持有有效的形状跟踪命中，则返回true。
   bool HasValidShapeData() const
   {
     check(
@@ -239,7 +240,7 @@ class GMC_API UGenMovementComponent : public UGenMovementReplicationComponent
 
 protected:
 
-  void ReplicatedTick(const FMove& Move, int32 Iteration, bool bIsSubSteppedIteration) override final;
+  virtual void ReplicatedTick(const FMove& Move, int32 Iteration, bool bIsSubSteppedIteration) override final;
   void SimulatedTick(
     float DeltaTime,
     const FState& SmoothState,
@@ -249,6 +250,7 @@ protected:
   ) override final;
 
   /// Implement your own movement logic here.
+  /// 在这里实现你自己的运动逻辑。
   ///
   /// @param        DeltaTime    The delta time for the current move. Not necessarily the same as the local world delta time.
   /// @returns      void
@@ -257,6 +259,7 @@ protected:
   virtual void GenReplicatedTick_Implementation(float DeltaTime) {}
 
   /// Implement additional cosmetic logic for remotely controlled pawns here.
+  /// 在此处为远程控制的 pawn 实施额外的装饰逻辑
   ///
   /// @param        DeltaTime    The current frame delta time.
   /// @returns      void
@@ -523,6 +526,7 @@ public:
 
   /// Sets a new physics delta time and optionally resets start location and velocity with the current pawn state and zeroes acceleration
   /// and force.
+  /// 设置一个新的 PhysDeltaTime，并可选择使用当前 pawn 状态重置起始位置和速度，并将加速度和力归零。
   ///
   /// @param        NewDeltaTime    The delta time to use for any future physics calculations.
   /// @param        bReset          Whether to update the start location and start velocity, and zero acceleration and force.
@@ -548,6 +552,7 @@ public:
   virtual bool HasMoved() const;
 
   /// Immediately stops movement by zeroing all motion values.
+  /// 通过将所有运动值归零来立即停止运动。
   ///
   /// @returns      void
   UFUNCTION(BlueprintCallable, Category = "General Movement Component")
@@ -789,6 +794,7 @@ public:
 
   /// Sets the half height of the root component. This is the extent in Z direction of the collision's default position (not rotated), and
   /// not necessarily the same as the "HalfHeight" property of a capsule (e.g. for a horizontal capsule this is the radius).
+  /// 设置根组件的半高。 这是碰撞默认位置（未旋转）在 Z 方向的范围，不一定与胶囊的“HalfHeight”属性相同（例如，对于水平胶囊，这是半径）。
   ///
   /// @param        NewHalfHeight      The new half height the root collision should have. May get clamped to ensure a valid extent.
   /// @param        bUpdateOverlaps    If true, updates touching array for owning actor (if the root component is registered and collides).
@@ -1138,15 +1144,24 @@ public:
   /// unrotated collision shape so for flat capsules and spheres the height is the radius property of the class.
   /// @attention The new half height is set through @see SetRootCollisionExtentSafe meaning no changes will be applied if the new extent
   /// would cause a blocking collision.
+  /// 将根碰撞的当前半高向目标值线性插值。 半高是未旋转碰撞形状的 Z 范围，因此对于扁平胶囊和球体，高度是类的半径属性。
+  /// @attention 新的半高是通过@see SetRootCollisionExtentSafe 设置的，这意味着如果新范围会导致阻塞碰撞，则不会应用任何更改。
   ///
   /// @param        TargetHalfHeight    The target value for the interpolation. Must be greater than 0.
+  ///									插值的目标值。 必须大于 0。
   /// @param        InterpSpeed         How quickly the target value should be reached.
+  ///									应该多快达到目标值。
   /// @param        InterpTolerance     Factor the test extent is scaled with (@see SetRootCollisionExtentSafe).
+  ///									测试范围的比例因子
   /// @param        DeltaTime           The delta time to use. If <= 0 the currently set physics delta time will be used.
+  ///									要使用的增量时间。 如果 <= 0，将使用当前设置的物理增量时间。
   /// @param        bAdjustPosition     If true, the updated component will be moved up/down (depending on the value of "AdjustDirection")
   ///                                   by the amount the half height has changed.
+  ///                                   如果为 true，更新后的组件将向上/向下移动（取决于“AdjustDirection”的值）半高的变化量。
   /// @param        AdjustDirection     Whether the updated component should move up or down. Only relevant if "bAdjustPosition" is true.
+  ///									更新的组件应该向上还是向下移动。 仅当“bAdjustPosition”为真时才相关。
   /// @returns      float               The absolute difference in half height that was actually applied to the root collision shape.
+  ///									实际应用于根碰撞形状的半高绝对差。
   UFUNCTION(BlueprintCallable, Category = "General Movement Component")
   virtual float LerpRootCollisionHalfHeight(
     float TargetHalfHeight,
@@ -1428,18 +1443,22 @@ public:
 private:
 
   /// The timestamp of the current move.
+  /// 当前移动的时间戳。
   float Timestamp{0.f};
   /// The (sub-stepped) delta time for the current move execution.
   float MoveDeltaTime{0.f};
   /// The current input vector.
+  /// 当前输入向量。
   FVector InputVector{0};
   /// The input values saved in the current move.
+  /// 当前移动中保存的输入值。
   FVector InVelocity{0};
   FVector InLocation{0};
   FRotator InRotation{0};
   FRotator InControlRotation{0};
   EInputMode InInputMode{0};
   /// The output values saved in the current move.
+  /// 当前移动中保存的输出值。
   FVector OutVelocity{0};
   FVector OutLocation{0};
   FRotator OutRotation{0};
@@ -1452,21 +1471,28 @@ private:
   TArray<const FState*> SkippedStatePtrs;
   FState DefaultState;
   /// The delta time used for physics calculations.
+  /// 用于物理计算的 DeltaTime。
   float PhysDeltaTime{0.f};
   /// The current acceleration of the pawn in cm/s^2.
+  /// Pawn的当前加速度，以 cm/s^2 为单位。
   FVector Acceleration{0};
   /// The current force acting on the pawn in kg*cm/s^2.
+  /// 当前作用在Pawn上的力，以 kg*cm/s^2 为单位。
   FVector Force{0};
   /// The velocity at the beginning of the current update in cm/s.
+  /// 当前更新开始时的速度，以 cm/s 为单位。
   FVector Velocity0{0};
   /// The location of the updated component at the beginning of the current update.
+  /// 当前更新开始时组件的位置
   FVector Location0{0};
   /// Info about the floor that is currently located underneath the pawn.
-  /// 有关当前位于棋子下方的地板的信息。
+  /// 有关当前位于Pawn下方的地板的信息。
   FFloorParams CurrentFloor;
   /// The number of the current move iteration.
+  /// 当前移动迭代的次数。
   int32 MoveIteration{0};
   /// Whether we are currently within a sub-stepped iteration of a move execution.
+  /// 我们当前是否处于移动执行的分步迭代中。
   bool bIsSubSteppedMoveIteration{false};
 };
 

@@ -93,10 +93,7 @@ void UGenOrganicMovementComponent::BindReplicationData_Implementation()
   BindBoolWithAccessor(bHasAnimRootMotion, HasAnimRootMotionAccessor, true, false, false);
 }
 
-int32 UGenOrganicMovementComponent::Client_ShouldEnqueueMove_Custom_Implementation(
-  const FMove& CurrentMove,
-  const FMove& LastImportantMove
-) const
+int32 UGenOrganicMovementComponent::Client_ShouldEnqueueMove_Custom_Implementation(const FMove& CurrentMove, const FMove& LastImportantMove) const
 {
   return (int32)Client_bDoNotCombineNextMove;
 }
@@ -141,6 +138,7 @@ void UGenOrganicMovementComponent::GenReplicatedTick_Implementation(float DeltaT
   {
     // Even though we don't receive updates from the replication component when simulating physics there are some cases where this branch
     // can still be taken (e.g. in sub-stepped iterations).
+  	// 即使在模拟物理时我们没有收到来自复制组件的更新，在某些情况下仍然可以采用此分支（例如，在分步迭代中）。
     DisableMovement();
     return;
   }
@@ -174,6 +172,7 @@ void UGenOrganicMovementComponent::GenReplicatedTick_Implementation(float DeltaT
   if (UpdatedComponent->IsSimulatingPhysics())
   {
     // Physics simulation may have been activated within this iteration. We still let the current tick finish in this case.
+  	// 物理模拟可能已在此迭代中激活。 在这种情况下，我们仍然让当前刻度完成。
     DisableMovement();
     return;
   }
@@ -432,76 +431,82 @@ void UGenOrganicMovementComponent::SetUpdatedComponent(USceneComponent* NewUpdat
 
 void UGenOrganicMovementComponent::PerformMovement(float DeltaSeconds)
 {
-  SCOPE_CYCLE_COUNTER(STAT_PerformMovement)
+	SCOPE_CYCLE_COUNTER(STAT_PerformMovement)
 
-  PreMovementUpdate(DeltaSeconds);
+	PreMovementUpdate(DeltaSeconds);
 
-  if (!CanMove())
-  {
-    BlockSkeletalMeshPoseTick();
-    HaltMovement();
-    return;
-  }
+	if (!CanMove())
+	{
+		BlockSkeletalMeshPoseTick();
+		HaltMovement();
+		return;
+	}
 
-  {
-    SCOPE_CYCLE_COUNTER(STAT_UpdateMovementMode)
+	{
+		SCOPE_CYCLE_COUNTER(STAT_UpdateMovementMode)
 
-    EGenMovementMode PreviousMovementMode = GetMovementMode();
+		EGenMovementMode PreviousMovementMode = GetMovementMode();
 
-    if (!UpdateMovementModeDynamic(CurrentFloor))
-    {
-      UpdateMovementModeStatic(CurrentFloor);
-    }
+		if (!UpdateMovementModeDynamic(CurrentFloor))
+		{
+			UpdateMovementModeStatic(CurrentFloor);
+		}
 
-    OnMovementModeUpdated(PreviousMovementMode);
-  }
+		OnMovementModeUpdated(PreviousMovementMode);
+	}
 
-  // @note Often the input vector is processed with regard to the current movement mode so we call this after the movement mode was updated.
-  ProcessedInputVector = PreProcessInputVector(GetMoveInputVector());
+	// @note Often the input vector is processed with regard to the current movement mode so we call this after the movement mode was updated.
+	// 通常输入向量是根据当前的移动模式来处理的，所以我们在移动模式被更新后调用它。
+	ProcessedInputVector = PreProcessInputVector(GetMoveInputVector());
 
-  RunPhysics(DeltaSeconds);
+	RunPhysics(DeltaSeconds);
 
-  const FVector VelocityBeforeMovementUpdate = GetVelocity();
+	const FVector VelocityBeforeMovementUpdate = GetVelocity();
 
-  // Preferred entry point for subclasses to implement their own movement logic.
-  MovementUpdate(DeltaSeconds);
+	// Preferred entry point for subclasses to implement their own movement logic.
+	// 子类实现自己的移动逻辑的首选入口点。
+	MovementUpdate(DeltaSeconds);
 
-  bHasAnimRootMotion = false;
-  bool bSimulatePoseTick{false};
-  if (ShouldTickPose(&bSimulatePoseTick))
-  {
-    TickPose(DeltaSeconds, bSimulatePoseTick);
-  }
+	bHasAnimRootMotion = false;
+	bool bSimulatePoseTick{false};
+	if (ShouldTickPose(&bSimulatePoseTick))
+	{
+		TickPose(DeltaSeconds, bSimulatePoseTick);
+	}
 
-  SetReceivedExternalForceUpward(VelocityBeforeMovementUpdate);
+	// 将受到的外力设置为向上
+	SetReceivedExternalForceUpward(VelocityBeforeMovementUpdate);
 
-  PostMovementUpdate(DeltaSeconds);
+	PostMovementUpdate(DeltaSeconds);
 
-  if (bClearMontageInstancesPerTick)
-  {
-    // Clear montages after they have been ticked and the post-movement update has run to ensure that no montage data is carried over
-    // between ticks by the anim instance.
-    // @attention It is important that montages are only cleared after the post-movement update so the event can be used to query the
-    // updated montage data.
-    ResetMontages(SkeletalMesh);
-  }
+	if (bClearMontageInstancesPerTick)
+	{
+	    // Clear montages after they have been ticked and the post-movement update has run to ensure that no montage data is carried over
+	    // between ticks by the anim instance.
+	    // @attention It is important that montages are only cleared after the post-movement update so the event can be used to query the
+	    // updated montage data.
+  		// 在勾选蒙太奇并运行后移动更新后清除蒙太奇，以确保动画实例在Tick之间没有蒙太奇数据。
+  		// @attention 重要的是，蒙太奇仅在移动后更新后才被清除，因此该事件可用于查询更新的蒙太奇数据。
+	    ResetMontages(SkeletalMesh);
+	}
 
-  DEBUG_STAT_AND_LOG_ORGANIC_MOVEMENT_VALUES
-  DEBUG_LOG_NAN_DIAGNOSTIC
+	DEBUG_STAT_AND_LOG_ORGANIC_MOVEMENT_VALUES
+	DEBUG_LOG_NAN_DIAGNOSTIC
 }
 
 void UGenOrganicMovementComponent::PreMovementUpdate_Implementation(float DeltaSeconds)
 {
-  ClampToValidValues();
-  if (IsAutonomousProxy() && !IsReplaying()) Client_bDoNotCombineNextMove = false;
-
-  // This is also a good place to (re)set all values that need to be frame-independent to guarantee accurate client replay.
-  SetPhysDeltaTime(DeltaSeconds, true);
-  ProcessedInputVector = FVector::ZeroVector;
-  LedgeFallOffDirection = FVector::ZeroVector;
-  UpdateFloor(CurrentFloor, FloorTraceLength);
-  UpdateImmersionDepth();
-  RootMotionParams = FRootMotionMovementParams();
+	ClampToValidValues();
+	if (IsAutonomousProxy() && !IsReplaying())
+		Client_bDoNotCombineNextMove = false;
+	// This is also a good place to (re)set all values that need to be frame-independent to guarantee accurate client replay.
+	// 这也是(重新)设置所有需要与帧无关的值的好地方，以保证准确的客户端重放。
+	SetPhysDeltaTime(DeltaSeconds, true);
+	ProcessedInputVector = FVector::ZeroVector;
+	LedgeFallOffDirection = FVector::ZeroVector;
+	UpdateFloor(CurrentFloor, FloorTraceLength);
+	UpdateImmersionDepth();
+	RootMotionParams = FRootMotionMovementParams();
 }
 
 void UGenOrganicMovementComponent::ClampToValidValues()
@@ -640,58 +645,52 @@ bool UGenOrganicMovementComponent::UpdateMovementModeDynamic_Implementation(cons
 
 void UGenOrganicMovementComponent::UpdateMovementModeStatic_Implementation(const FFloorParams& Floor)
 {
-  checkGMC(BuoyantStateMinImmersion >= KINDA_SMALL_NUMBER)
+	checkGMC(BuoyantStateMinImmersion >= KINDA_SMALL_NUMBER)
 
-  if (CurrentImmersionDepth >= BuoyantStateMinImmersion)
-  {
-    SetMovementMode(EGenMovementMode::Buoyant);
-    FLog(VeryVerbose, "New movement mode is %s (immersion depth = %f).", *DebugGetMovementModeAsString(MovementMode), CurrentImmersionDepth)
-    return;
-  }
+	// 如果当前浸入深度 >= BuoyantStateMinImmersion, 将移动模式设置为 EGenMovementMode::Buoyant
+	if (CurrentImmersionDepth >= BuoyantStateMinImmersion)
+	{
+		SetMovementMode(EGenMovementMode::Buoyant);
+		FLog(VeryVerbose, "New movement mode is %s (immersion depth = %f).", *DebugGetMovementModeAsString(MovementMode), CurrentImmersionDepth)
+		return;
+	}
 
-  if (!IsAffectedByGravity())
-  {
-    SetMovementMode(EGenMovementMode::Airborne);
-    return;
-  }
+	// 如果Pawn不受重力影响, 则将移动模式设置为 EGenMovementMode::Airborne
+	if (!IsAffectedByGravity())
+	{
+		SetMovementMode(EGenMovementMode::Airborne);
+		return;
+	}
 
-  checkGMC(GetGravityZ() < 0.f)
-  checkGMC(LedgeFallOffDirection.IsZero())
-  bool bShouldFallOffLedge = false;
-  if (Floor.HasValidShapeData())
-  {
-    const bool bShapeHitWithinFloorRange = Floor.GetShapeDistanceToFloor() <= MAX_DISTANCE_TO_FLOOR;
-    const bool bLineHitWithinFloorRange = Floor.HasValidLineData() && Floor.GetLineDistanceToFloor() <= MAX_DISTANCE_TO_FLOOR;
-    const bool bHitFloorIsWalkable =
-      bShapeHitWithinFloorRange && HitWalkableFloor(Floor.ShapeHit()) || bLineHitWithinFloorRange && HitWalkableFloor(Floor.LineHit());
-    const bool bVelocityPointsAwayFromGround = (Floor.ShapeHit().ImpactNormal | GetVelocity().GetSafeNormal()) > DOT_PRODUCT_75;
-    const bool bHasSignificantUpwardVelocity = GetVelocity().Z > 100.f;
-    const bool bShouldRemainAirborne = IsAirborne() && bHasSignificantUpwardVelocity && bVelocityPointsAwayFromGround;
-    const bool bLineHitWithinStepDownHeight =
-      Floor.HasValidLineData() && Floor.GetLineDistanceToFloor() <= MaxStepDownHeight + MAX_DISTANCE_TO_FLOOR;
-    bShouldFallOffLedge =
-      !bLineHitWithinStepDownHeight
-      && IsExceedingFallOffThreshold(Floor.ShapeHit().ImpactPoint, GetLowerBound(), UpdatedComponent->GetComponentLocation());
-    if (
-      (bShapeHitWithinFloorRange || bLineHitWithinFloorRange)
-      && bHitFloorIsWalkable
-      && !bShouldRemainAirborne
-      && !bShouldFallOffLedge
-    )
-    {
-      // We hit a walkable surface. When flying or swimming we are never based on anything i.e. nothing is considered a walkable surface.
-      SetMovementMode(EGenMovementMode::Grounded);
-      return;
-    }
-  }
+	checkGMC(GetGravityZ() < 0.f)
+	checkGMC(LedgeFallOffDirection.IsZero())
+	bool bShouldFallOffLedge = false;	// 是否应该从边缘掉下
+	if (Floor.HasValidShapeData())
+	{
+		const bool bShapeHitWithinFloorRange = Floor.GetShapeDistanceToFloor() <= MAX_DISTANCE_TO_FLOOR;																		// 形状命中是否在地板范围内
+		const bool bLineHitWithinFloorRange = Floor.HasValidLineData() && Floor.GetLineDistanceToFloor() <= MAX_DISTANCE_TO_FLOOR;												// 线性命中是否在地板范围内
+		const bool bHitFloorIsWalkable = bShapeHitWithinFloorRange && HitWalkableFloor(Floor.ShapeHit()) || bLineHitWithinFloorRange && HitWalkableFloor(Floor.LineHit());		// 命中的地板是否可以行走
+		const bool bVelocityPointsAwayFromGround = (Floor.ShapeHit().ImpactNormal | GetVelocity().GetSafeNormal()) > DOT_PRODUCT_75;											// Velocity Points是否远离地面
+		const bool bHasSignificantUpwardVelocity = GetVelocity().Z > 100.f;																										// 有显著的上升速度
+		const bool bShouldRemainAirborne = IsAirborne() && bHasSignificantUpwardVelocity && bVelocityPointsAwayFromGround;														// 应该保持空中飞行
+		const bool bLineHitWithinStepDownHeight = Floor.HasValidLineData() && Floor.GetLineDistanceToFloor() <= MaxStepDownHeight + MAX_DISTANCE_TO_FLOOR;
+		bShouldFallOffLedge = !bLineHitWithinStepDownHeight && IsExceedingFallOffThreshold(Floor.ShapeHit().ImpactPoint, GetLowerBound(), UpdatedComponent->GetComponentLocation());
+		if ((bShapeHitWithinFloorRange || bLineHitWithinFloorRange) && bHitFloorIsWalkable && !bShouldRemainAirborne && !bShouldFallOffLedge)
+		{
+			// We hit a walkable surface. When flying or swimming we are never based on anything i.e. nothing is considered a walkable surface.
+			// 我们到达了一个可行走的表面。当飞行或游泳时，我们没有基于任何东西，即没有任何东西被认为是可行走的表面。
+			SetMovementMode(EGenMovementMode::Grounded);
+			return;
+		}
+	}
 
-  SetMovementMode(EGenMovementMode::Airborne);
+	SetMovementMode(EGenMovementMode::Airborne);
 
-  if (bShouldFallOffLedge)
-  {
-    const FVector ImpactToCenter = (UpdatedComponent->GetComponentLocation() - Floor.ShapeHit().ImpactPoint);
-    LedgeFallOffDirection = FVector(ImpactToCenter.X, ImpactToCenter.Y, 0.f).GetSafeNormal();
-  }
+	if (bShouldFallOffLedge)
+	{
+		const FVector ImpactToCenter = (UpdatedComponent->GetComponentLocation() - Floor.ShapeHit().ImpactPoint);
+		LedgeFallOffDirection = FVector(ImpactToCenter.X, ImpactToCenter.Y, 0.f).GetSafeNormal();
+	}
 }
 
 void UGenOrganicMovementComponent::OnMovementModeUpdated_Implementation(EGenMovementMode PreviousMovementMode)

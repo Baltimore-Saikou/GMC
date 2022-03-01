@@ -142,6 +142,7 @@ void UGenMovementReplicationComponent::PostInitProperties()
   if (!HasAnyFlags(NoBindingFlags))
   {
     // Called from here because binding must happen before any (de)serialization of replicated data occurs.
+  	// 从这里调用是因为绑定必须在复制数据的任何（反）序列化之前发生。
     BindReplicationData();
   }
 

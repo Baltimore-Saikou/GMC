@@ -60,13 +60,7 @@ void UGenMovementComponent::ReplicatedTick(const FMove& Move, int32 Iteration, b
   DEBUG_GMC_SHOW_MOVEMENT_VECTORS
 }
 
-void UGenMovementComponent::SimulatedTick(
-  float DeltaTime,
-  const FState& SmoothState,
-  int32 StartStateIndex,
-  int32 TargetStateIndex,
-  const TArray<int32>& SkippedStateIndices
-)
+void UGenMovementComponent::SimulatedTick(float DeltaTime, const FState& SmoothState, int32 StartStateIndex, int32 TargetStateIndex, const TArray<int32>& SkippedStateIndices)
 {
   SCOPE_CYCLE_COUNTER(STAT_SimulatedTick)
 

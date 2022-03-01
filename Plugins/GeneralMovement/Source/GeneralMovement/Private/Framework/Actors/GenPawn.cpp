@@ -132,63 +132,74 @@ void AGenPawn::BindKeyInput(UInputComponent* PlayerInputComponent)
 
 void AGenPawn::MoveForward(float Scale)
 {
-  if (Scale != 0.f)
-  {
-    if (Controller)
-    {
-      if (InputMode == EInputMode::None) return;
-      if (InputMode == EInputMode::AllAbsolute)
-      {
-        AddMovementInput(FVector(Scale, 0.f, 0.f), 1.f);
-        return;
-      }
-      FRotator ControlRotation = Controller->GetControlRotation();
-      if (InputMode == EInputMode::AbsoluteZ) ControlRotation.Pitch = 0.f;
-      FVector WorldControlDirection = FRotationMatrix(ControlRotation).GetScaledAxis(EAxis::X);
-      if (InputMode == EInputMode::AbsoluteZ) WorldControlDirection.Z = 0.f;
-      AddMovementInput(WorldControlDirection, Scale);
-    }
-  }
+	if (Scale != 0.f)
+	{
+		if (Controller)
+		{
+			if (InputMode == EInputMode::None)
+      			return;
+			if (InputMode == EInputMode::AllAbsolute)
+			{
+		        AddMovementInput(FVector(Scale, 0.f, 0.f), 1.f);
+		        return;
+		    }
+			FRotator ControlRotation = Controller->GetControlRotation();
+			
+			if (InputMode == EInputMode::AbsoluteZ)
+				ControlRotation.Pitch = 0.f;
+			
+			FVector WorldControlDirection = FRotationMatrix(ControlRotation).GetScaledAxis(EAxis::X);
+			
+			if (InputMode == EInputMode::AbsoluteZ)
+				WorldControlDirection.Z = 0.f;
+			
+			AddMovementInput(WorldControlDirection, Scale);
+		}
+	}
 }
 
 void AGenPawn::MoveRight(float Scale)
 {
-  if (Scale != 0.f)
-  {
-    if (Controller)
-    {
-      if (InputMode == EInputMode::None) return;
-      if (InputMode == EInputMode::AllAbsolute)
-      {
-        AddMovementInput(FVector(0.f, Scale, 0.f), 1.f);
-        return;
-      }
-      FRotator ControlRotation = Controller->GetControlRotation();
-      if (InputMode == EInputMode::AbsoluteZ) ControlRotation.Pitch = 0.f;
-      FVector WorldControlDirection = FRotationMatrix(ControlRotation).GetScaledAxis(EAxis::Y);
-      if (InputMode == EInputMode::AbsoluteZ) WorldControlDirection.Z = 0.f;
-      AddMovementInput(WorldControlDirection, Scale);
-    }
-  }
+	if (Scale != 0.f)
+	{
+		if (Controller)
+		{
+			if (InputMode == EInputMode::None)
+				return;
+			if (InputMode == EInputMode::AllAbsolute)
+			{
+				AddMovementInput(FVector(0.f, Scale, 0.f), 1.f);
+				return;
+			}
+			FRotator ControlRotation = Controller->GetControlRotation();
+			if (InputMode == EInputMode::AbsoluteZ)
+				ControlRotation.Pitch = 0.f;
+			FVector WorldControlDirection = FRotationMatrix(ControlRotation).GetScaledAxis(EAxis::Y);
+			if (InputMode == EInputMode::AbsoluteZ)
+				WorldControlDirection.Z = 0.f;
+			AddMovementInput(WorldControlDirection, Scale);
+		}
+	}
 }
 
 void AGenPawn::MoveUp(float Scale)
 {
-  if (Scale != 0.f)
-  {
-    if (Controller)
-    {
-      if (InputMode == EInputMode::None) return;
-      if (InputMode == EInputMode::AllAbsolute || InputMode == EInputMode::AbsoluteZ)
-      {
-        AddMovementInput(FVector(0.f, 0.f, Scale), 1.f);
-        return;
-      }
-      const FRotator ControlRotation = Controller->GetControlRotation();
-      const FVector WorldControlDirection = FRotationMatrix(ControlRotation).GetScaledAxis(EAxis::Z);
-      AddMovementInput(WorldControlDirection, Scale);
-    }
-  }
+	if (Scale != 0.f)
+	{
+		if (Controller)
+		{
+			if (InputMode == EInputMode::None)
+				return;
+			if (InputMode == EInputMode::AllAbsolute || InputMode == EInputMode::AbsoluteZ)
+			{
+				AddMovementInput(FVector(0.f, 0.f, Scale), 1.f);
+				return;
+			}
+			const FRotator ControlRotation = Controller->GetControlRotation();
+			const FVector WorldControlDirection = FRotationMatrix(ControlRotation).GetScaledAxis(EAxis::Z);
+			AddMovementInput(WorldControlDirection, Scale);
+		}
+	}
 }
 
 void AGenPawn::RollView(float Value)

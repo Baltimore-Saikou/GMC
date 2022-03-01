@@ -32,145 +32,172 @@ struct GMC_API FMove
 {
   GENERATED_BODY()
 
-  // The timestamp is important for the order and relevancy of moves. It is sent from the client to the server with every move
-  // (uncompressed). A negative timestamp signifies that this is an invalid or uninitialized move e.g. a move created through the default
-  // constructor. Such a move has no pawn associated with it but it can be used to store data temporarily or as an "empty" return value.
-  float Timestamp{-1.f};
+	// The timestamp is important for the order and relevancy of moves. It is sent from the client to the server with every move
+	// (uncompressed). A negative timestamp signifies that this is an invalid or uninitialized move e.g. a move created through the default
+	// constructor. Such a move has no pawn associated with it but it can be used to store data temporarily or as an "empty" return value.
+	// 时间戳对于移动的顺序和相关性很重要。 每次移动（未压缩）时，它都会从客户端发送到服务器。
+	// 负时间戳表示这是无效或未初始化的移动，例如 通过默认构造函数创建的移动。
+	// 这样的移动没有与之关联的棋子，但它可以用于临时存储数据或作为“空”返回值。
+	float Timestamp{-1.f};
 
-  // The delta time for the current move. This could be an accumulated value if no other input has changed since the last move and moves
-  // have been combined. The delta time is not replicated, the server calculates the delta time of the client from the timestamps. Clients
-  // do the same to ensure that the same value is used on both machines.
-  float DeltaTime{0.f};
+	// The delta time for the current move. This could be an accumulated value if no other input has changed since the last move and moves
+	// have been combined. The delta time is not replicated, the server calculates the delta time of the client from the timestamps. Clients
+	// do the same to ensure that the same value is used on both machines.
+	// 当前移动的增量时间。 如果自上次移动后没有任何其他输入发生变化并且移动已合并，则这可能是一个累积值。
+	// 增量时间不复制，服务器根据时间戳计算客户端的增量时间。 客户端执行相同操作以确保在两台机器上使用相同的值。
+	float DeltaTime{0.f};
 
-  // Used to refer to the In- and Out-variables of a move.
-  enum EStateVars { Input, Output };
+	// Used to refer to the In- and Out-variables of a move.
+	// 用于指移动的输入和输出变量。
+	enum EStateVars { Input, Output };
 
-  // Input values. These are the starting values before move execution i.e. the input for the movement logic. The input vector is the
-  // direction of movement received from the controller (e.g. from WASD or the left analog stick), the control rotation is the controller
-  // view (e.g. from the mouse or the right analog stick). The rotation is the actor's root component orientation. The input flags are
-  // boolean inputs that are usually used for triggerable abilities (e.g. sprinting or a dodge).
-  FVector InputVector{0};
-  bool bInputFlag1{false};
-  bool bInputFlag2{false};
-  bool bInputFlag3{false};
-  bool bInputFlag4{false};
-  bool bInputFlag5{false};
-  bool bInputFlag6{false};
-  bool bInputFlag7{false};
-  bool bInputFlag8{false};
-  bool bInputFlag9{false};
-  bool bInputFlag10{false};
-  bool bInputFlag11{false};
-  bool bInputFlag12{false};
-  bool bInputFlag13{false};
-  bool bInputFlag14{false};
-  bool bInputFlag15{false};
-  bool bInputFlag16{false};
-  FVector InVelocity{0};
-  FVector InLocation{0};
-  FRotator InRotation{0};
-  FRotator InControlRotation{0};
-  EInputMode InInputMode{0};
+	// Input values. These are the starting values before move execution i.e. the input for the movement logic. The input vector is the
+	// direction of movement received from the controller (e.g. from WASD or the left analog stick), the control rotation is the controller
+	// view (e.g. from the mouse or the right analog stick). The rotation is the actor's root component orientation. The input flags are
+	// boolean inputs that are usually used for triggerable abilities (e.g. sprinting or a dodge).
+	// 输入值。 这些是移动执行之前的起始值，即移动逻辑的输入。
+	// 输入向量是从控制器接收到的移动方向（例如，来自 WASD 或左模拟摇杆），控制旋转是控制器视图（例如，来自鼠标或右模拟摇杆）。
+	// 旋转是actor的根组件方向。 输入标志是布尔输入，通常用于可触发的能力（例如冲刺或闪避）。
+	FVector InputVector{0};
+	bool bInputFlag1{false};
+	bool bInputFlag2{false};
+	bool bInputFlag3{false};
+	bool bInputFlag4{false};
+	bool bInputFlag5{false};
+	bool bInputFlag6{false};
+	bool bInputFlag7{false};
+	bool bInputFlag8{false};
+	bool bInputFlag9{false};
+	bool bInputFlag10{false};
+	bool bInputFlag11{false};
+	bool bInputFlag12{false};
+	bool bInputFlag13{false};
+	bool bInputFlag14{false};
+	bool bInputFlag15{false};
+	bool bInputFlag16{false};
+	FVector InVelocity{0};
+	FVector InLocation{0};
+	FRotator InRotation{0};
+	FRotator InControlRotation{0};
+	EInputMode InInputMode{0};
 
-  // Output values. These are the results of the move execution i.e. the output of the movement logic. The server calculates those values
-  // from the input as well, but may use the out location/rotation/control rotation (depending on the settings) sent by the client to
-  // compare the local server results and determine if the client move was valid.
-  FVector OutVelocity{0};
-  FVector OutLocation{0};
-  FRotator OutRotation{0};
-  FRotator OutControlRotation{0};
-  EInputMode OutInputMode{0};
+	// Output values. These are the results of the move execution i.e. the output of the movement logic. The server calculates those values
+	// from the input as well, but may use the out location/rotation/control rotation (depending on the settings) sent by the client to
+	// compare the local server results and determine if the client move was valid.
+	// 输出值。 这些是移动执行的结果，即移动逻辑的输出。
+	// 服务器也会根据输入计算这些值，但可能会使用客户端发送的输出位置/旋转/控制旋转（取决于设置）来比较本地服务器结果并确定客户端移动是否有效。
+	FVector OutVelocity{0};
+	FVector OutLocation{0};
+	FRotator OutRotation{0};
+	FRotator OutControlRotation{0};
+	EInputMode OutInputMode{0};
 
-  // Used on the client to indicate that a value has changed and needs to be serialized, and on the server to indicate that a new value was
-  // received and deserialized.
-  bool bHasNewInputVectorX{false};
-  bool bHasNewInputVectorY{false};
-  bool bHasNewInputVectorZ{false};
-  bool bHasNewOutVelocity{false};
-  bool bHasNewOutLocation{false};
-  bool bHasNewOutRotationRoll{false};
-  bool bHasNewOutRotationPitch{false};
-  bool bHasNewOutRotationYaw{false};
-  bool bHasNewOutControlRotationRoll{false};
-  bool bHasNewOutControlRotationPitch{false};
-  bool bHasNewOutControlRotationYaw{false};
+	// Used on the client to indicate that a value has changed and needs to be serialized, and on the server to indicate that a new value was
+	// received and deserialized.
+	// 用在客户端表示某个值发生了变化需要序列化，用在服务端表示接收到一个新的值并反序列化。
+	bool bHasNewInputVectorX{false};
+	bool bHasNewInputVectorY{false};
+	bool bHasNewInputVectorZ{false};
+	bool bHasNewOutVelocity{false};
+	bool bHasNewOutLocation{false};
+	bool bHasNewOutRotationRoll{false};
+	bool bHasNewOutRotationPitch{false};
+	bool bHasNewOutRotationYaw{false};
+	bool bHasNewOutControlRotationRoll{false};
+	bool bHasNewOutControlRotationPitch{false};
+	bool bHasNewOutControlRotationYaw{false};
 
-  // Serialization and compression options. Cannot be changed at runtime because moves are sent via RPC argument from client to server.
-  // Custom settings can be implemented for individual classes by implementing a derived struct and reconfiguring the replication options
-  // in the constructor.
-  // @attention It is strongly recommended to use the default quantization levels. These are not only used to compress the data when sending
-  // the move to the server, they affect the local pawn state as well. After a move was executed the autonomous proxy pawn is set to a
-  // quantized state based on the configured settings, and if the compression is too strong this might be noticable while playing.
-  // @attention Never use byte compression. It is not accurate enough to get consistent quantization results across client and server and
-  // may trigger erroneous replays.
-  // @attention The out velocity is currently not used anywhere on the server and should not be replicated. The velocity is still quantized
-  // locally on the client with the level that is set within the autonomous proxy server state, the quantization level that is set here is
-  // not used either.
-  // @attention When setting the number of serialized input flags, keep in mind that input flags can be skipped during binding (e.g. input
-  // flags 1 and 3 could be bound, but not 2). However, the value of NumSerializedInputFlags will cause the specified amount to be
-  // serialized in order (e.g. setting the value 3 will serialize input flags 1, 2 and 3), so depending on how the input flags are bound
-  // some may not be replicated even if the number of bound flags matches the value of NumSerializedInputFlags. Only change this property
-  // from the default max value if you understand the implications.
-  ESizeQuantization InputVectorQuantize{ESizeQuantization::Short};
-  EDecimalQuantization OutVelocityQuantize{EDecimalQuantization::RoundTwoDecimals}; // Not used.
-  EDecimalQuantization OutLocationQuantize{EDecimalQuantization::RoundTwoDecimals};
-  ESizeQuantization OutRotationQuantize{ESizeQuantization::Short};
-  ESizeQuantization OutControlRotationQuantize{ESizeQuantization::Short};
-  bool bSerializeInputVectorX{true};
-  bool bSerializeInputVectorY{true};
-  bool bSerializeInputVectorZ{true};
-  bool bSerializeOutVelocity{false}; // Not used, keep disabled.
-  bool bSerializeOutLocation{true};
-  bool bSerializeOutRotationRoll{true};
-  bool bSerializeOutRotationPitch{true};
-  bool bSerializeOutRotationYaw{true};
-  bool bSerializeOutControlRotationRoll{true};
-  bool bSerializeOutControlRotationPitch{true};
-  bool bSerializeOutControlRotationYaw{true};
-  int32 NumSerializedInputFlags{16};
+	// Serialization and compression options. Cannot be changed at runtime because moves are sent via RPC argument from client to server.
+	// Custom settings can be implemented for individual classes by implementing a derived struct and reconfiguring the replication options
+	// in the constructor.
+	// @attention It is strongly recommended to use the default quantization levels. These are not only used to compress the data when sending
+	// the move to the server, they affect the local pawn state as well. After a move was executed the autonomous proxy pawn is set to a
+	// quantized state based on the configured settings, and if the compression is too strong this might be noticable while playing.
+	// @attention Never use byte compression. It is not accurate enough to get consistent quantization results across client and server and
+	// may trigger erroneous replays.
+	// @attention The out velocity is currently not used anywhere on the server and should not be replicated. The velocity is still quantized
+	// locally on the client with the level that is set within the autonomous proxy server state, the quantization level that is set here is
+	// not used either.
+	// @attention When setting the number of serialized input flags, keep in mind that input flags can be skipped during binding (e.g. input
+	// flags 1 and 3 could be bound, but not 2). However, the value of NumSerializedInputFlags will cause the specified amount to be
+	// serialized in order (e.g. setting the value 3 will serialize input flags 1, 2 and 3), so depending on how the input flags are bound
+	// some may not be replicated even if the number of bound flags matches the value of NumSerializedInputFlags. Only change this property
+	// from the default max value if you understand the implications.
 
-  FMove() = default;
-  FMove(
-    float Timestamp,
-    float DeltaTime = 0.f,
-    FVector InputVector = FVector{0},
-    bool bInputFlag1 = false,
-    bool bInputFlag2 = false,
-    bool bInputFlag3 = false,
-    bool bInputFlag4 = false,
-    bool bInputFlag5 = false,
-    bool bInputFlag6 = false,
-    bool bInputFlag7 = false,
-    bool bInputFlag8 = false,
-    bool bInputFlag9 = false,
-    bool bInputFlag10 = false,
-    bool bInputFlag11 = false,
-    bool bInputFlag12 = false,
-    bool bInputFlag13 = false,
-    bool bInputFlag14 = false,
-    bool bInputFlag15 = false,
-    bool bInputFlag16 = false,
-    FVector InVelocity = FVector{0},
-    FVector InLocation = FVector{0},
-    FRotator InRotation = FRotator{0},
-    FRotator InControlRotation = FRotator{0},
-    EInputMode InInputMode = EInputMode::None
-  );
+	// 序列化和压缩选项。无法在运行时更改，因为移动是通过 RPC 参数从客户端发送到服务器的。
+	// 通过实现派生结构并在构造函数中重新配置复制选项，可以为各个类实现自定义设置。
 
-  bool IsValid() const { return Timestamp >= 0.f; }
-  bool NetSerialize(FArchive& Ar, UPackageMap* Map, bool& bOutSuccess);
-  bool SerializeInputVector(FArchive& Ar);
-  void SerializeInputFlags(FArchive& Ar);
-  bool SerializeOutVelocity(FArchive& Ar);
-  bool SerializeOutLocation(FArchive& Ar);
-  void SerializeOutRotation(FArchive& Ar);
-  void SerializeOutControlRotation(FArchive& Ar);
-  void QuantizeInputVector();
-  void QuantizeOutVelocity();
-  void QuantizeOutLocation();
-  void QuantizeOutRotation();
-  void QuantizeOutControlRotation();
-  DEFINE_PREREPLICATED_DATA_FMOVE()
+	// @attention 强烈建议使用默认量化级别。这些不仅用于在将移动发送到服务器时压缩数据，它们也会影响本地 pawn 状态。
+	// 执行移动后，自主代理 pawn 根据配置设置为量化状态，如果压缩太强，则在播放时可能会注意到这一点。
+
+	// @attention 永远不要使用字节压缩。它不够准确，无法在客户端和服务器之间获得一致的量化结果，并且可能会触发错误的重放。
+
+	// @attention 输出速度当前在服务器上的任何地方都没有使用，不应该被复制。
+	// 速度仍然在客户端本地量化，级别在自治代理服务器状态内设置，此处设置的量化级别也不使用。
+
+	// @attention 设置序列化输入标志的数量时，请记住在绑定期间可以跳过输入标志（例如，可以绑定输入标志 1 和 3，但不能绑定 2）。
+	// 但是，NumSerializedInputFlags 的值将导致指定数量按顺序序列化（例如，将值设置为 3 将序列化输入标志 1、2 和 3），
+	// 因此根据输入标志的绑定方式，即使绑定标志的数量与 NumSerializedInputFlags 的值匹配。如果您了解其含义，请仅将此属性从默认最大值更改。
+	ESizeQuantization InputVectorQuantize{ESizeQuantization::Short};
+	EDecimalQuantization OutVelocityQuantize{EDecimalQuantization::RoundTwoDecimals}; // Not used.
+	EDecimalQuantization OutLocationQuantize{EDecimalQuantization::RoundTwoDecimals};
+	ESizeQuantization OutRotationQuantize{ESizeQuantization::Short};
+	ESizeQuantization OutControlRotationQuantize{ESizeQuantization::Short};
+	bool bSerializeInputVectorX{true};
+	bool bSerializeInputVectorY{true};
+	bool bSerializeInputVectorZ{true};
+	bool bSerializeOutVelocity{false}; // Not used, keep disabled.
+	bool bSerializeOutLocation{true};
+	bool bSerializeOutRotationRoll{true};
+	bool bSerializeOutRotationPitch{true};
+	bool bSerializeOutRotationYaw{true};
+	bool bSerializeOutControlRotationRoll{true};
+	bool bSerializeOutControlRotationPitch{true};
+	bool bSerializeOutControlRotationYaw{true};
+	int32 NumSerializedInputFlags{16};
+
+	FMove() = default;
+	FMove(
+	float Timestamp,
+	float DeltaTime = 0.f,
+	FVector InputVector = FVector{0},
+	bool bInputFlag1 = false,
+	bool bInputFlag2 = false,
+	bool bInputFlag3 = false,
+	bool bInputFlag4 = false,
+	bool bInputFlag5 = false,
+	bool bInputFlag6 = false,
+	bool bInputFlag7 = false,
+	bool bInputFlag8 = false,
+	bool bInputFlag9 = false,
+	bool bInputFlag10 = false,
+	bool bInputFlag11 = false,
+	bool bInputFlag12 = false,
+	bool bInputFlag13 = false,
+	bool bInputFlag14 = false,
+	bool bInputFlag15 = false,
+	bool bInputFlag16 = false,
+	FVector InVelocity = FVector{0},
+	FVector InLocation = FVector{0},
+	FRotator InRotation = FRotator{0},
+	FRotator InControlRotation = FRotator{0},
+	EInputMode InInputMode = EInputMode::None
+	);
+
+	bool IsValid() const { return Timestamp >= 0.f; }
+	bool NetSerialize(FArchive& Ar, UPackageMap* Map, bool& bOutSuccess);
+	bool SerializeInputVector(FArchive& Ar);
+	void SerializeInputFlags(FArchive& Ar);
+	bool SerializeOutVelocity(FArchive& Ar);
+	bool SerializeOutLocation(FArchive& Ar);
+	void SerializeOutRotation(FArchive& Ar);
+	void SerializeOutControlRotation(FArchive& Ar);
+	void QuantizeInputVector();
+	void QuantizeOutVelocity();
+	void QuantizeOutLocation();
+	void QuantizeOutRotation();
+	void QuantizeOutControlRotation();
+	DEFINE_PREREPLICATED_DATA_FMOVE()
 };
 
 template<>
@@ -208,122 +235,140 @@ struct GMC_API FState
 {
   GENERATED_BODY()
 
-  // The timestamp is important for the order and relevancy of states. It is sent from the server to the client with every replication
-  // update (uncompressed). A negative timestamp signifies that this is an invalid or uninitialized state e.g. a state created through the
-  // default constructor. Such a state has no pawn associated with it but it can be used to store data temporarily or as an "empty" return
-  // value.
-  UPROPERTY(Transient, BlueprintReadOnly, Category = "General Movement Component")
-  float Timestamp{-1.f};
+	// The timestamp is important for the order and relevancy of states. It is sent from the server to the client with every replication
+	// update (uncompressed). A negative timestamp signifies that this is an invalid or uninitialized state e.g. a state created through the
+	// default constructor. Such a state has no pawn associated with it but it can be used to store data temporarily or as an "empty" return
+	// value.
+	// 时间戳对于状态的顺序和相关性很重要。 每次复制更新（未压缩）时，它都会从服务器发送到客户端。
+	// 负时间戳表示这是无效或未初始化的状态，例如 通过默认构造函数创建的状态。 这种状态没有与之关联的pawn，但它可以用于临时存储数据或作为“空”返回值。
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "General Movement Component")
+	float Timestamp{-1.f};
 
-  UPROPERTY()
-  // The owning pawn of this state. This is mostly relevant for the server states of the replication component. Assigned when the pawn is
-  // spawned (@see UGenMovementReplicationComponent::SetUpdatedComponent).
-  AGenPawn* Owner{nullptr};
+	UPROPERTY()
+	// The owning pawn of this state. This is mostly relevant for the server states of the replication component. Assigned when the pawn is
+	// spawned (@see UGenMovementReplicationComponent::SetUpdatedComponent).
+	// 该状态的拥有棋子。这主要与复制组件的服务器状态相关。在生成 pawn 时分配（@see UGenMovementReplicationComponent::SetUpdatedComponent）。
+	AGenPawn* Owner{nullptr};
 
-  // For the server state members of the replication component, this will hold the net role of the recipient (either ROLE_AutonomousProxy or
-  // ROLE_SimulatedProxy).
-  ENetRole RecipientRole{ROLE_None};
+	// For the server state members of the replication component, this will hold the net role of the recipient (either ROLE_AutonomousProxy or
+	// ROLE_SimulatedProxy).
+	// 对于复制组件的服务器状态成员，这将持有接收者的网络角色（ROLE_AutonomousProxy 或 ROLE_SimulatedProxy）。
+	ENetRole RecipientRole{ROLE_None};
 
-  // Whether we should optimize bandwidth usage when replicating the server state. This flag will be set and updated automatically by the
-  // server based on the value set in the replication component (@see UGenMovementReplicationComponent::bOptimizeTraffic), do not modify
-  // directly.
-  bool bOptimizeTraffic{false};
+	// Whether we should optimize bandwidth usage when replicating the server state. This flag will be set and updated automatically by the
+	// server based on the value set in the replication component (@see UGenMovementReplicationComponent::bOptimizeTraffic), do not modify
+	// directly.
+	// 我们是否应该在复制服务器状态时优化带宽使用。
+	// 此标志将由服务器根据复制组件中设置的值自动设置和更新（@see UGenMovementReplicationComponent::bOptimizeTraffic），请勿直接修改。
+	bool bOptimizeTraffic{false};
 
-  // Set by the server to inform the client whether the replicated server state contains the full set of replicated data. Mainly used in the
-  // context of the client replay. When a client move was valid, the autonomous proxy usually only receives the velocity (plus the input
-  // mode and potentially bound data) from the server, but if a client source move (the move with the same timestamp as the replicated
-  // server state) was not valid, the server sends the full batch of replicated state data (velocity, location, actor rotation, control
-  // rotation) so the client can replay. Simulated proxies always receive the full batch of replication data meaning this property will
-  // always be true when replicating to a simulated proxy (@see NetSerialize).
-  // @attention Must be initialized with "true". The value is only ever changed to "false" on the server for the autonomous proxy server
-  // state, and simulated proxies don't even need to receive this property as it is never changed from the initial value "true" for those
-  // pawns.
-  bool bContainsFullRepBatch{true};
+	// Set by the server to inform the client whether the replicated server state contains the full set of replicated data. Mainly used in the
+	// context of the client replay. When a client move was valid, the autonomous proxy usually only receives the velocity (plus the input
+	// mode and potentially bound data) from the server, but if a client source move (the move with the same timestamp as the replicated
+	// server state) was not valid, the server sends the full batch of replicated state data (velocity, location, actor rotation, control
+	// rotation) so the client can replay. Simulated proxies always receive the full batch of replication data meaning this property will
+	// always be true when replicating to a simulated proxy (@see NetSerialize).
+	// @attention Must be initialized with "true". The value is only ever changed to "false" on the server for the autonomous proxy server
+	// state, and simulated proxies don't even need to receive this property as it is never changed from the initial value "true" for those
+	// pawns.
+	// 由服务器设置，通知客户端复制的服务器状态是否包含完整的复制数据集。主要用在客户端重放的上下文中。
+	// 当客户端移动有效时，自治代理通常只从服务器接收速度（加上输入模式和可能绑定的数据），
+	// 但如果客户端源移动（与复制的服务器状态具有相同时间戳的移动）不是有效时，服务器会发送整批复制的状态数据（速度、位置、actor 旋转、Control旋转），
+	// 以便客户端可以重播。 模拟代理始终接收整批复制数据，这意味着在复制到模拟代理时此属性将始终为真（@see NetSerialize）。
+	bool bContainsFullRepBatch{true};
 
-  // Replicated state values. An FState saves the current state of a pawn. As such it does not have input and output values like a move.
-  // When used for server state replication however, the properties are saved after the movement was executed on the server so they are the
-  // equivalent of the out values of a move. States are used for the local smoothing of remotely controlled pawns and as a way for the
-  // autonomous proxy to validate its own state and stay in sync with the server.
-  UPROPERTY(Transient, BlueprintReadOnly, Category = "General Movement Component")
-  FVector Velocity{0};
-  UPROPERTY(Transient, BlueprintReadOnly, Category = "General Movement Component")
-  FVector Location{0};
-  UPROPERTY(Transient, BlueprintReadOnly, Category = "General Movement Component")
-  FRotator Rotation{0};
-  UPROPERTY(Transient, BlueprintReadOnly, Category = "General Movement Component")
-  FRotator ControlRotation{0};
-  UPROPERTY(Transient, BlueprintReadOnly, Category = "General Movement Component")
-  EInputMode InputMode{0};
-  bool bInputFlag1{false};
-  bool bInputFlag2{false};
-  bool bInputFlag3{false};
-  bool bInputFlag4{false};
-  bool bInputFlag5{false};
-  bool bInputFlag6{false};
-  bool bInputFlag7{false};
-  bool bInputFlag8{false};
-  bool bInputFlag9{false};
-  bool bInputFlag10{false};
-  bool bInputFlag11{false};
-  bool bInputFlag12{false};
-  bool bInputFlag13{false};
-  bool bInputFlag14{false};
-  bool bInputFlag15{false};
-  bool bInputFlag16{false};
+	// Replicated state values. An FState saves the current state of a pawn. As such it does not have input and output values like a move.
+	// When used for server state replication however, the properties are saved after the movement was executed on the server so they are the
+	// equivalent of the out values of a move. States are used for the local smoothing of remotely controlled pawns and as a way for the
+	// autonomous proxy to validate its own state and stay in sync with the server.
+	// 复制的状态值。 FState 保存 pawn 的当前状态。 因此，它不像移动那样具有输入和输出值。
+	// 但是，当用于服务器状态复制时，属性会在服务器上执行移动后保存，因此它们相当于移动的输出值。
+	// 状态用于远程控制 pawn 的本地平滑，并作为自治代理验证其自身状态并与服务器保持同步的一种方式。
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "General Movement Component")
+	FVector Velocity{0};
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "General Movement Component")
+	FVector Location{0};
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "General Movement Component")
+	FRotator Rotation{0};
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "General Movement Component")
+	FRotator ControlRotation{0};
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "General Movement Component")
+	EInputMode InputMode{0};
+	bool bInputFlag1{false};
+	bool bInputFlag2{false};
+	bool bInputFlag3{false};
+	bool bInputFlag4{false};
+	bool bInputFlag5{false};
+	bool bInputFlag6{false};
+	bool bInputFlag7{false};
+	bool bInputFlag8{false};
+	bool bInputFlag9{false};
+	bool bInputFlag10{false};
+	bool bInputFlag11{false};
+	bool bInputFlag12{false};
+	bool bInputFlag13{false};
+	bool bInputFlag14{false};
+	bool bInputFlag15{false};
+	bool bInputFlag16{false};
 
-  // Used by @see UGenMovementReplicationComponent::Server_SwapStateBuffer to buffer the relative location and rotation of the simulated
-  // root component (@see UGenMovementReplicationComponent::SimulatedRootComponent) before and after remote move execution on the server.
-  FVector SimulatedRootRelativeLocation{0};
-  FRotator SimulatedRootRelativeRotation{0};
+	// Used by @see UGenMovementReplicationComponent::Server_SwapStateBuffer to buffer the relative location and rotation of the simulated
+	// root component (@see UGenMovementReplicationComponent::SimulatedRootComponent) before and after remote move execution on the server.
+	// @see UGenMovementReplicationComponent::Server_SwapStateBuffer 用于缓冲模拟根组件（@see UGenMovementReplicationComponent::SimulatedRootComponent）在服务器上执行远程移动之前和之后的相对位置和旋转。
+	FVector SimulatedRootRelativeLocation{0};
+	FRotator SimulatedRootRelativeRotation{0};
 
-  // Quantization levels are set from the replication component options in @see UGenMovementReplicationComponent::PostInitProperties and are
-  // always set to match between the autonomous and simulated proxy server states.
-  // @attention Byte compression should never be used since the replicated value cannot be quantized back reliably to the original one by
-  // the recipient.
-  // @attention It is strongly recommended to use the default quantization levels. These are not only used to compress the data for
-  // replication, they affect the local pawn state as well. After a move was executed the pawn is set to a quantized state based on the
-  // configured settings, and if the compression is too strong this might be noticable while playing.
-  EDecimalQuantization LocationQuantize{EDecimalQuantization::RoundTwoDecimals};
-  EDecimalQuantization VelocityQuantize{EDecimalQuantization::RoundTwoDecimals};
-  ESizeQuantization RotationQuantize{ESizeQuantization::Short};
-  ESizeQuantization ControlRotationQuantize{ESizeQuantization::Short};
+	// Quantization levels are set from the replication component options in @see UGenMovementReplicationComponent::PostInitProperties and are
+	// always set to match between the autonomous and simulated proxy server states.
+	// @attention Byte compression should never be used since the replicated value cannot be quantized back reliably to the original one by
+	// the recipient.
+	// @attention It is strongly recommended to use the default quantization levels. These are not only used to compress the data for
+	// replication, they affect the local pawn state as well. After a move was executed the pawn is set to a quantized state based on the
+	// configured settings, and if the compression is too strong this might be noticable while playing.
+	// 量化级别从@see UGenMovementReplicationComponent::PostInitProperties 中的复制组件选项设置，并且始终设置为在自主和模拟代理服务器状态之间匹配。
+	// @attention 永远不应该使用字节压缩，因为复制的值不能被接收者可靠地量化回原始值。
+	// @attention 强烈建议使用默认量化级别。 这些不仅用于压缩数据以进行复制，它们也会影响本地 pawn 状态。
+	// 执行移动后，pawn 会根据配置的设置设置为量化状态，如果压缩太强，在播放时可能会很明显。
+	EDecimalQuantization LocationQuantize{EDecimalQuantization::RoundTwoDecimals};
+	EDecimalQuantization VelocityQuantize{EDecimalQuantization::RoundTwoDecimals};
+	ESizeQuantization RotationQuantize{ESizeQuantization::Short};
+	ESizeQuantization ControlRotationQuantize{ESizeQuantization::Short};
 
-  UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, DisplayName = "Replicate Timestamp", Category = "Replication", meta =
-    (Tooltip = "Whether the timestamp of the server state should be replicated."))
-  bool bSerializeTimestamp{true};
-  UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, DisplayName = "Replicate Move Validation", Category = "Replication", meta =
-    (Tooltip = "Whether the result of the client move validation should be replicated. Should always be replicated to the autonomous proxy, but never to simulated proxies."))
-  bool bSerializeMoveValidation{true};
-  UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, DisplayName = "Replicate Location", Category = "Replication", meta =
-    (Tooltip = "Whether the location of the pawn should be replicated to the client. ATTENTION: When disabled, the location cannot be changed locally anymore inside the replicated tick function."))
-  bool bSerializeLocation{true};
-  UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, DisplayName = "Replicate Velocity", Category = "Replication", meta =
-    (Tooltip = "Whether the velocity of the pawn should be replicated to the client. ATTENTION: When disabled, the velocity cannot be changed locally anymore inside the replicated tick function."))
-  bool bSerializeVelocity{true};
-  UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, DisplayName = "Replicate Rotation Roll", Category = "Replication", meta =
-    (Tooltip = "Whether the rotation roll of the pawn should be replicated to the client. ATTENTION: When disabled, the rotation roll cannot be changed locally anymore inside the replicated tick function."))
-  bool bSerializeRotationRoll{true};
-  UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, DisplayName = "Replicate Rotation Pitch", Category = "Replication", meta =
-    (Tooltip = "Whether the rotation pitch of the pawn should be replicated to the client. ATTENTION: When disabled, the rotation pitch cannot be changed locally anymore inside the replicated tick function."))
-  bool bSerializeRotationPitch{true};
-  UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, DisplayName = "Replicate Rotation Yaw", Category = "Replication", meta =
-    (Tooltip = "Whether the rotation yaw of the pawn should be replicated to the client. ATTENTION: When disabled, the rotation yaw cannot be changed locally anymore inside the replicated tick function."))
-  bool bSerializeRotationYaw{true};
-  UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, DisplayName = "Replicate Control Rotation Roll", Category = "Replication", meta =
-    (Tooltip = "Whether the control rotation roll of the pawn should be replicated to the client. ATTENTION: When disabled, the control rotation roll cannot be changed locally anymore inside the replicated tick function."))
-  bool bSerializeControlRotationRoll{true};
-  UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, DisplayName = "Replicate Control Rotation Pitch", Category = "Replication", meta =
-    (Tooltip = "Whether the control rotation pitch of the pawn should be replicated to the client. ATTENTION: When disabled, the rotation pitch cannot be changed locally anymore inside the replicated tick function."))
-  bool bSerializeControlRotationPitch{true};
-  UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, DisplayName = "Replicate Control Rotation Yaw", Category = "Replication", meta =
-    (Tooltip = "Whether the control rotation yaw of the pawn should be replicated to the client. ATTENTION: When disabled, the rotation yaw cannot be changed locally anymore inside the replicated tick function."))
-  bool bSerializeControlRotationYaw{true};
-  UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, DisplayName = "Replicate Input Mode", Category = "Replication", meta =
-    (Tooltip = "Whether the input mode of the pawn should be replicated to the client. ATTENTION: When disabled, the input mode cannot be changed locally anymore inside the replicated tick function."))
-  bool bSerializeInputMode{true};
-  UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, DisplayName = "Replicate Bound Data", Category = "Replication", meta =
-    (Tooltip = "Whether variables that were bound to pre-replicated data should be replicated."))
-  bool bSerializeBoundData{true};
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, DisplayName = "Replicate Timestamp", Category = "Replication", meta =
+		(Tooltip = "Whether the timestamp of the server state should be replicated.\n是否应复制服务器状态的时间戳."))
+	bool bSerializeTimestamp{true};
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, DisplayName = "Replicate Move Validation", Category = "Replication", meta =
+	  (Tooltip = "Whether the result of the client move validation should be replicated. Should always be replicated to the autonomous proxy, but never to simulated proxies.\n是否应复制客户端移动验证的结果. 应始终复制到自治代理, 但永远不要复制到模拟代理."))
+	bool bSerializeMoveValidation{true};
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, DisplayName = "Replicate Location", Category = "Replication", meta =
+		(Tooltip = "Whether the location of the pawn should be replicated to the client. ATTENTION: When disabled, the location cannot be changed locally anymore inside the replicated tick function.\n是否应将 pawn 的位置复制到客户端. 注意：禁用时, 不能再在复制的Tick函数内本地更改位置."))
+	bool bSerializeLocation{true};
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, DisplayName = "Replicate Velocity", Category = "Replication", meta =
+		(Tooltip = "Whether the velocity of the pawn should be replicated to the client. ATTENTION: When disabled, the velocity cannot be changed locally anymore inside the replicated tick function.\n是否应将 pawn 的速度复制到客户端. 注意: 禁用后, 无法再在复制的Tick函数内本地更改速度."))
+	bool bSerializeVelocity{true};
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, DisplayName = "Replicate Rotation Roll", Category = "Replication", meta =
+		(Tooltip = "Whether the rotation roll of the pawn should be replicated to the client. ATTENTION: When disabled, the rotation roll cannot be changed locally anymore inside the replicated tick function.\n是否应将 pawn 的Rotation Roll复制到客户端. 注意: 禁用时,无法再在复制的Tick函数内本地更改Rotation Roll."))
+	bool bSerializeRotationRoll{true};
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, DisplayName = "Replicate Rotation Pitch", Category = "Replication", meta =
+		(Tooltip = "Whether the rotation pitch of the pawn should be replicated to the client. ATTENTION: When disabled, the rotation pitch cannot be changed locally anymore inside the replicated tick function.\n是否应将 pawn 的Rotation Pitch复制到客户端. 注意: 禁用时, 无法再在复制的Tick函数内本地更改Rotation Pitch."))
+	bool bSerializeRotationPitch{true};
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, DisplayName = "Replicate Rotation Yaw", Category = "Replication", meta =
+		(Tooltip = "Whether the rotation yaw of the pawn should be replicated to the client. ATTENTION: When disabled, the rotation yaw cannot be changed locally anymore inside the replicated tick function.\n是否应将 pawn 的Rotation Yaw复制到客户端. 注意: 禁用时, 无法再在复制的Tick函数内本地更改Rotation Yaw."))
+	bool bSerializeRotationYaw{true};
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, DisplayName = "Replicate Control Rotation Roll", Category = "Replication", meta =
+		(Tooltip = "Whether the control rotation roll of the pawn should be replicated to the client. ATTENTION: When disabled, the control rotation roll cannot be changed locally anymore inside the replicated tick function.\n是否应将 pawn 的Control Rotation Roll复制到客户端. 注意: 禁用时, 无法再在复制的Tick函数内本地更改Control Rotation Roll."))
+	bool bSerializeControlRotationRoll{true};
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, DisplayName = "Replicate Control Rotation Pitch", Category = "Replication", meta =
+		(Tooltip = "Whether the control rotation pitch of the pawn should be replicated to the client. ATTENTION: When disabled, the rotation pitch cannot be changed locally anymore inside the replicated tick function.\n是否应将 pawn 的Control Rotation Pitch复制到客户端. 注意: 禁用时, 无法再在复制的Tick函数内本地更改的Control Rotation Pitch."))
+	bool bSerializeControlRotationPitch{true};
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, DisplayName = "Replicate Control Rotation Yaw", Category = "Replication", meta =
+		(Tooltip = "Whether the control rotation yaw of the pawn should be replicated to the client. ATTENTION: When disabled, the rotation yaw cannot be changed locally anymore inside the replicated tick function.\n是否应将 pawn 的Control Rotation Yaw复制到客户端. 注意: 禁用时, 无法再在复制的Tick函数内本地更改Control Rotation Yaw."))
+	bool bSerializeControlRotationYaw{true};
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, DisplayName = "Replicate Input Mode", Category = "Replication", meta =
+		(Tooltip = "Whether the input mode of the pawn should be replicated to the client. ATTENTION: When disabled, the input mode cannot be changed locally anymore inside the replicated tick function.\n是否应将 pawn 的Input Mode复制到客户端. 注意: 禁用时, 无法再在复制的Tick函数内本地更改Input Mode."))
+	bool bSerializeInputMode{true};
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, DisplayName = "Replicate Bound Data", Category = "Replication", meta =
+		(Tooltip = "Whether variables that were bound to pre-replicated data should be replicated.\n是否应该复制绑定到预复制数据的变量."))
+	bool bSerializeBoundData{true};
 
   // Flags to keep track of which bound input flags should be replicated to simulated proxies. Input flags are never replicated to the
   // autonomous proxy.
@@ -444,11 +489,11 @@ enum class EInterpolationMethod : uint8
 UENUM(BlueprintType)
 enum class ENetworkPreset : uint8
 {
-  LAN UMETA(DisplayName = "LAN",ToolTip = "Local network with no latency and ideal network conditions."),
-  Competitive UMETA(DisplayName = "Competitive", ToolTip = "Excellent network conditions with wired connections, low latencies (ping < 60 ms), minimal jitter and no packet loss."),
-  Regular UMETA(DisplayName = "Regular", ToolTip = "Average network conditions with stable connections, moderate latencies (ping < 100 ms), little jitter and tolerable packet loss (< 2%)."),
-  LowEnd UMETA(DisplayName = "Low-end", ToolTip = "Poor network conditions with potentially unstable connections, high latencies (up to 200 ms), noticeable jitter and serious packet loss (up to 5%)."),
-  Custom UMETA(DisplayName = "Custom", ToolTip = "User-defined configuration."),
+  LAN UMETA(DisplayName = "LAN",ToolTip = "Local network with no latency and ideal network conditions.\n没有延迟和理想网络条件的本地网络。"),
+  Competitive UMETA(DisplayName = "Competitive", ToolTip = "Excellent network conditions with wired connections, low latencies (ping < 60 ms), minimal jitter and no packet loss.\n具有有线连接、低延迟（ping < 60 ms）、最小抖动和无数据包丢失的出色网络条件。"),
+  Regular UMETA(DisplayName = "Regular", ToolTip = "Average network conditions with stable connections, moderate latencies (ping < 100 ms), little jitter and tolerable packet loss (< 2%).\n平均网络条件，连接稳定、延迟适中（ping < 100 毫秒）、抖动小和可容忍的丢包率（< 2%）。"),
+  LowEnd UMETA(DisplayName = "Low-end", ToolTip = "Poor network conditions with potentially unstable connections, high latencies (up to 200 ms), noticeable jitter and serious packet loss (up to 5%).\n网络状况不佳，可能存在不稳定的连接、高延迟（高达 200 毫秒）、明显的抖动和严重的数据包丢失（高达 5%）。"),
+  Custom UMETA(DisplayName = "Custom", ToolTip = "User-defined configuration.\n用户定义的配置。"),
   MAX UMETA(Hidden),
 };
 
@@ -657,6 +702,8 @@ protected:
   /// Bind members that should be replicated here by using the binding-function for the respective variable type (e.g. BindBool, BindFloat,
   /// BindInt, etc.). All binding must be fully set up before any replication happens and bindings must always match across server and
   /// client, meaning you should not bind data anywhere else but within this function. Once bound, variables cannot be unbound.
+  /// 通过使用相应变量类型（例如BindBool、BindFloat、BindInt等）的绑定函数，在此处复制的绑定成员。在进行任何复制之前，必须完全设置所有绑定，
+  /// 并且绑定必须始终在服务器和客户端之间匹配，这意味着您不应该在除此函数之外的任何地方绑定数据。一旦绑定，变量就无法解除绑定。
   ///
   /// @returns      void
   UFUNCTION(BlueprintNativeEvent, Category = "General Movement Component")
@@ -972,6 +1019,7 @@ protected:
 
   /// Tells us whether we are currently replaying moves from the move queue on a client. Useful for subclasses to branch on in their
   /// implementation of @see ReplicatedTick. Always returns false on the server and for simulated proxies.
+  /// 告诉我们当前是否从客户端移动队列中重放移动。用于子类在@see ReplicatedTick的实现中进行分支。在服务器和模拟代理上总是返回false。
   ///
   /// @returns      bool    True if we are currently executing a client replay, false otherwise.
   UFUNCTION(BlueprintCallable, Category = "General Movement Component")
@@ -1007,6 +1055,7 @@ public:
   float GetTime() const;
 
   /// Checks if we are the autonomous proxy on a client.
+  /// 检查我们是否是客户端的自治代理。
   ///
   /// @returns      bool    True if our net role is ROLE_AutonomousProxy, false otherwise.
   UFUNCTION(BlueprintCallable, Category = "General Movement Component")
@@ -2517,19 +2566,26 @@ protected:
   /// @param        bReplicateToAutonomousProxy    Whether the bound variable should be replicated to the autonomous proxy. Save for some
   ///                                              advanced cases, this should generally be set to true because bound variables are usually
   ///                                              required for the client replay.
+  ///                                              绑定变量是否应复制到自治代理。除某些高级情况外，这通常应设置为 true，因为客户端重播通常需要绑定变量。
   /// @param        bReplicateToSimulatedProxy     Whether the bound variable should be replicated to simulated proxies. Usually this should
   ///                                              only be true for variables that trigger animations that remote clients should also be
   ///                                              able to see. Also affects smoothed listen server pawns in the same way.
+  ///                                              绑定变量是否应复制到模拟代理。通常这应该只适用于触发远程客户端也应该能够看到的动画的变量。
+  ///                                              也以相同的方式影响平滑的监听服务器Pawn。
   /// @param        bForceNetUpdateOnChange        Only relevant when bReplicateToSimulatedProxy is true. Whether a net update should be
   ///                                              forced to simulated proxies every time the value of the bound variable changes. This
   ///                                              should generally only be enabled for variables that change infrequently and for which
   ///                                              remote clients need to know about every intermediate value. Net updates are never forced
   ///                                              to the autonomous proxy from bound data.
+  ///                                              仅当 bReplicateToSimulatedProxy 为真时才相关。
+  ///                                              每次绑定变量的值发生变化时，是否应强制对模拟代理进行净更新。
+  ///                                              这通常应该只对不经常更改的变量启用，并且远程客户端需要知道每个中间值。
+  ///                                              网络更新永远不会从绑定数据强制到自治代理。
   /// @returns      void
 public:
 
   UFUNCTION(BlueprintCallable, Category = "General Movement Component", meta = (DisplayName = "BindBool",
-    ToolTip = "Bind a regular boolean value. Uses only 1 bit for replication."))
+    ToolTip = "Bind a regular boolean value. Uses only 1 bit for replication. 绑定一个常规的布尔值, 仅使用 1 bit进行复制。"))
   void K2_BindBool(
     UPARAM(Ref) bool& VariableToBind,
     UPARAM(DisplayName = "Replay") bool bReplicateToAutonomousProxy = true,

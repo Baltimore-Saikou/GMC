@@ -149,7 +149,7 @@ protected:
 
   void BindReplicationData_Implementation() override;
   int32 Client_ShouldEnqueueMove_Custom_Implementation(const FMove& CurrentMove, const FMove& LastImportantMove) const override;
-  void GenReplicatedTick_Implementation(float DeltaTime) override;
+  virtual void GenReplicatedTick_Implementation(float DeltaTime) override;
   void GenSimulatedTick_Implementation(float DeltaTime) override;
   void OnImmediateStateLoaded_Implementation(EImmediateContext Context) override;
   void OnSimulatedStateLoaded_Implementation(
@@ -191,6 +191,9 @@ protected:
   /// movement mode can be set directly.
   /// @attention We don't use the enum (@see EGenMovementMode) directly for the movement mode to be able to simply bind it to a half-byte
   /// for replication.
+  /// 棋子的当前移动模式。 默认值：0 = 无，1 = 接地，2 = 空中，3 = 浮力。 最多支持 16 个复制状态。
+  /// @attention 使用@see SetMovementMode 提示调用@see OnMovementModeChanged。 如果不想触发事件，可以直接设置运动模式。
+  /// @attention 我们不直接将枚举（@see EGenMovementMode）用于移动模式，以便能够简单地将其绑定到半字节以进行复制。
   uint8 MovementMode{0};
 
   UPROPERTY(BlueprintReadWrite, Category = "General Movement Component")
@@ -223,6 +226,7 @@ protected:
 
   UPROPERTY(BlueprintReadOnly, Category = "General Movement Component")
   /// The current immersion depth of the pawn. Range is from 0 (not in fluid) to 1 (fully immersed).
+  /// Pawn的当前浸入深度。 范围从 0（不在流体中）到 1（完全浸入）。
   float CurrentImmersionDepth{0.f};
 
   UPROPERTY(BlueprintReadOnly, Category = "General Movement Component")
@@ -232,6 +236,7 @@ protected:
   UPROPERTY(BlueprintReadOnly, Category = "General Movement Component")
   /// The 2D direction in which the pawn should fall off a ledge when exceeding @see LedgeFallOffThreshold. Will be a zero vector if the
   /// pawn is currently not in the process of falling off.
+  /// 当超过@see Ledge FallOff Threshold 时，pawn 应该从壁架上掉落的 2D 方向。 如果pawn当前不在掉落过程中，则将是一个零向量。
   FVector LedgeFallOffDirection{0};
 
   UPROPERTY(BlueprintReadOnly, Category = "General Movement Component")
@@ -247,6 +252,7 @@ protected:
   virtual void MaintainRootCollisionCoherency();
 
   /// Clamps selected data members to their respective valid range when the actor is spawned and before movement is executed.
+  /// 在生成actor时和执行移动之前，将选定的数据成员固定在各自的有效范围内
   ///
   /// @returns      void
   virtual void ClampToValidValues();
@@ -264,6 +270,7 @@ protected:
   virtual void PerformMovement(float DeltaSeconds);
 
   /// Executes the movement physics based on the current movement mode for this tick.
+  /// 根据当前的移动模式执行移动物理。
   ///
   /// @param        DeltaSeconds    The delta time to use.
   /// @returns      void
@@ -279,6 +286,7 @@ protected:
 
   /// Called before any kind of movement related update has happened. This is the only movement event that is called even if the pawn cannot
   /// move (@see CanMove).
+  /// 在任何与运动相关的更新发生之前调用。这是唯一一个在棋子无法移动时调用的移动事件（@see CanMove）。
   ///
   /// @param        DeltaSeconds    The current move delta time.
   /// @returns      void
@@ -288,6 +296,7 @@ protected:
 
   /// Called after movement was performed. If we are playing a montage the pose has been ticked and root motion was consumed at the time
   /// this function is called.
+  /// 在执行移动后调用。如果我们正在播放蒙太奇，则在调用此函数时姿势已被勾选并且根运动已被消耗。
   ///
   /// @param        DeltaSeconds    The current move delta time.
   /// @returns      void
@@ -314,6 +323,7 @@ protected:
 
   /// Called at the end of the current movement update. This is the preferred entry point for subclasses to implement custom logic if
   /// automatic handling of the default movement modes is desired.
+  /// 在当前移动更新结束时调用。如果需要自动处理默认移动模式，这是子类实现自定义逻辑的首选入口点。
   ///
   /// @param        DeltaSeconds    The current move delta time (may not be equal to the frame delta time).
   /// @returns      void
@@ -420,6 +430,7 @@ protected:
   virtual void CalculateVelocityCustom_Implementation(float DeltaSeconds) {}
 
   /// Recalculates the current immersion depth of the pawn and updates @see CurrentImmersionDepth with the new value.
+  /// 重新计算pawn的当前浸入深度，并更新@see CurrentImmersionDepth的新值。
   ///
   /// @returns      void
   UFUNCTION(BlueprintCallable, Category = "General Movement Component")
@@ -441,6 +452,8 @@ protected:
   /// Sets @see bReceivedExternalForceUpward based on the velocity before and after @see MovementUpdate and the current processed input
   /// vector (@see ProcessedInputVector).
   /// @attention Does not consider the input vector if the input mode (@see EInputMode) is set to "AllAbsolute" or "None".
+  /// 根据@see MovementUpdate 前后的速度和当前处理的输入向量（@see ProcessedInputVector）设置@see bReceivedExternalForceUpward。
+  /// @attention 如果输入模式（@see EInputMode）设置为“AllAbsolute”或“None”，则不考虑输入向量。
   ///
   /// @param        PreviousVelocity    The previous velocity to compare the current velocity to.
   /// @returns      void
@@ -524,6 +537,7 @@ protected:
 
   /// Updates the movement mode dynamically (i.e. with regard to the current movement mode). Returning false indicates that the movement
   /// mode should still be updated statically (@see UpdateMovementModeStatic) afterwards, returning true will skip the static update.
+  /// 动态更新移动模式（即关于当前移动模式）。返回false表示移动模式仍应静态更新（@see UpdateMovementModeStatic），返回true将跳过静态更新。
   ///
   /// @param        Floor    The current floor parameters.
   /// @returns      bool     If false, the movement mode will still be updated statically afterwards.
@@ -532,6 +546,7 @@ protected:
   virtual bool UpdateMovementModeDynamic_Implementation(const FFloorParams& Floor);
 
   /// Updates the movement mode statically (i.e. independent of the current movement mode).
+  /// 静态更新运动模式（即独立于当前运动模式）。
   ///
   /// @param        Floor    The current floor parameters.
   /// @returns      void
@@ -866,12 +881,14 @@ public:
 
   /// Completely disables kinematic movement.
   /// @attention This will set the movement mode (@see EGenMovementMode) to "None".
+  /// 完全禁用运动学运动。这会将移动模式设置为"None"
   ///
   /// @returns      void
   UFUNCTION(BlueprintCallable, Category = "General Movement Component")
   virtual void DisableMovement();
 
   /// Checks whether we are affected by gravity.
+  /// 检查我们是否受重力影响。
   ///
   /// @returns      bool    True if the pawn is influenced by gravity, false otherwise.
   UFUNCTION(BlueprintCallable, Category = "General Movement Component")
@@ -1275,6 +1292,7 @@ public:
 
   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement|Operation", meta = (ClampMin = "0", UIMin = "0", UIMax = "100"))
   /// When walking down a slope or off a ledge, the pawn will remain grounded if the floor underneath is closer than this threshold.
+  /// 当走下斜坡或离开边缘时，如果下方的地板比此阈值更近，则Pawn将保持接地。
   float MaxStepDownHeight{50.f};
 
   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement|Operation")
@@ -1291,12 +1309,16 @@ public:
   /// threshold allows. This is percentage based with the center of the collision being 0 (i.e. the pawn will fall off as early as possible)
   /// and the outer boundary of the collision being 1 (i.e. the pawn will fall off as late as possible). For box collisions the threshold
   /// is internally treated as either 1 (if >= 0.5) or 0 (if < 0.5).
+  /// 当站在边缘时，如果它的碰撞形状比设置的阈值允许的超出边缘末端的位置更远，则Pawn将掉落。
+  /// 这是基于百分比的碰撞中心为 0（即，pawn 将尽可能早地脱落）和碰撞的外边界为 1（即，pawn 将尽可能晚地脱落）。
+  /// 对于盒体碰撞，阈值 >= 0.5 被视为 1, 阈值 < 0.5 被视为 0.
   float LedgeFallOffThreshold{0.5f};
 
   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement|Operation", meta =
     (ClampMin = "0.0001", ClampMax = "1", UIMin = "0.1", UIMax = "1"))
   /// How deeply we need to be immersed in a fluid to enter the buoyant movement state with 1 being fully immersed in the fluid volume. The
   /// fluid volume should have the "Physics on Contact" flag enabled for this to work correctly.
+  /// 我们需要在流体中浸入多深才能进入浮力运动状态，其中 1 是完全浸入流体体积中。 流体体积应启用“接触物理”标志，以使其正常工作。
   float BuoyantStateMinImmersion{0.8f};
 
   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement|Operation", meta =

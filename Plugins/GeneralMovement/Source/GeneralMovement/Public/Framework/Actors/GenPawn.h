@@ -9,10 +9,10 @@ DECLARE_LOG_CATEGORY_EXTERN(LogGMCPawn, Log, All);
 UENUM(BlueprintType)
 enum class EInputMode : uint8
 {
-  None UMETA(DisplayName = "None", ToolTip = "Directional input is disabled."),
-  AllRelative UMETA(DisplayName = "AllRelative", ToolTip = "Input is all relative to the controller view meaning forward is whatever direction we are currently looking towards. This mode is most commonly used for three-dimensional movement, e.g. flying or swimming."),
-  AbsoluteZ UMETA(DisplayName = "AbsoluteZ", ToolTip = "Only the Z component of the input vector is absolute, X and Y components are relative to the controller view, but with zeroed pitch i.e. forward is affected only by the view yaw. This is the standard input mode you would expect for a game that lets you control a character that is walking on the ground."),
-  AllAbsolute UMETA(DisplayName = "AllAbsolute", ToolTip = "All components of the input vector are absolute and unaffected by the controller view. This is most commonly used for vehicular input where the input values usually represent the state of something more abstract like the gas pedal or the steering wheel."),
+  None UMETA(DisplayName = "None", ToolTip = "Directional input is disabled.方向输入被禁用."),
+  AllRelative UMETA(DisplayName = "AllRelative", ToolTip = "Input is all relative to the controller view meaning forward is whatever direction we are currently looking towards. This mode is most commonly used for three-dimensional movement, e.g. flying or swimming.输入都是相对于控制器视图的，forward指的是我们当前看到的方向。这种模式最常用于三维运动，如飞行或游泳。"),
+  AbsoluteZ UMETA(DisplayName = "AbsoluteZ", ToolTip = "Only the Z component of the input vector is absolute, X and Y components are relative to the controller view, but with zeroed pitch i.e. forward is affected only by the view yaw. This is the standard input mode you would expect for a game that lets you control a character that is walking on the ground.只有输入矢量的Z分量是绝对的，X和Y分量是相对于控制器视图的，但在俯仰为零的情况下，即前倾只受视图偏航的影响。这是一款让你能够控制在地面上行走的角色的游戏的标准输入模式。"),
+  AllAbsolute UMETA(DisplayName = "AllAbsolute", ToolTip = "All components of the input vector are absolute and unaffected by the controller view. This is most commonly used for vehicular input where the input values usually represent the state of something more abstract like the gas pedal or the steering wheel.输入矢量的所有组件都是绝对的，不受控制器视图的影响。这通常用于车辆输入，输入值通常代表一些更抽象的状态，如油门踏板或方向盘。"),
   MAX UMETA(Hidden)
 };
 
