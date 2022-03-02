@@ -760,9 +760,13 @@ public:
   /// Returns the width of the root component. This is the extent in the XY plane from the center in the given direction. For symmetric
   /// shapes the return value is always the radius (meaning the passed direction does not matter) but for horizontal capsules and box shapes
   /// this is the distance to the boundary of the collision in the passed direction.
+  /// 返回根组件的宽度。 这是在给定方向上从中心到 XY 平面的范围。
+  /// 对于对称形状，返回值始终是半径（意味着传递的方向无关紧要），但对于水平胶囊和盒子形状，这是在传递方向上到碰撞边界的距离。
   ///
   /// @param        Direction    The direction for which to calculate the width (only relevant for non-symmetric shapes).
+  ///							 计算宽度的方向（仅与非对称形状相关）。
   /// @returns      float        The width of the root collision in the given direction.
+  ///							 给定方向上根碰撞的宽度。
   UFUNCTION(BlueprintCallable, Category = "General Movement Component")
   virtual float GetRootCollisionWidth(const FVector& Direction) const;
 
@@ -815,12 +819,14 @@ public:
   virtual void SetRootCollisionHalfHeightSafe(float NewHalfHeight, float Tolerance = 0.99f, bool bUpdateOverlaps = true);
 
   /// Sets the rotation of the root collision.
+  /// 设置根碰撞的旋转。
   ///
   /// @param        NewRotation    The new rotation of the root collision.
   /// @returns      void
   virtual void SetRootCollisionRotation(const FQuat& NewRotation);
 
   /// Sets the rotation of the root collision.
+  /// 设置根碰撞的旋转。
   ///
   /// @param        NewRotation    The new rotation of the root collision.
   /// @returns      void
@@ -828,12 +834,14 @@ public:
   virtual void SetRootCollisionRotation(const FRotator& NewRotation);
 
   /// Returns the rotation of the root collision.
+  /// 返回根碰撞的旋转。
   ///
   /// @returns      FRotator    The current rotation of the root collision.
   UFUNCTION(BlueprintCallable, Category = "General Movement Component")
   virtual FRotator GetRootCollisionRotation() const;
 
   /// Version of @see SetRootCollisionRotation that only sets the new rotation if it will not cause any blocking collision.
+  /// 仅在不会导致任何阻塞碰撞的情况下设置新的旋转。
   ///
   /// @param        NewRotation    The new rotation of the root collision.
   /// @param        Tolerance      When testing whether the new rotation would cause a blocking collision, this argument is applied as a
@@ -842,26 +850,35 @@ public:
   virtual void SetRootCollisionRotationSafe(const FQuat& NewRotation, float Tolerance = 0.99f);
 
   /// Version of @see SetRootCollisionRotation that only sets the new rotation if it will not cause any blocking collision.
+  /// 仅在不会导致任何阻塞碰撞的情况下设置新的旋转。
   ///
   /// @param        NewRotation    The new rotation of the root collision.
+  ///							   根碰撞的新旋转。
   /// @param        Tolerance      When testing whether the new rotation would cause a blocking collision, this argument is applied as a
   ///                              scaling factor to the collision extent to allow for a more lenient (< 1) or stricter (> 1) test.
+  ///                              在测试新的旋转是否会导致阻塞碰撞时，此参数将作为碰撞范围的缩放因子应用，以允许更宽松 (< 1) 或更严格 (> 1) 的测试。
   /// @returns      void
   UFUNCTION(BlueprintCallable, Category = "General Movement Component")
   virtual void SetRootCollisionRotationSafe(const FRotator& NewRotation, float Tolerance = 0.99f);
 
-  /// Generate an FCollisionShape with the passed extent from an EGenCollisionShape value. The extent format is as follows:
-  /// VerticalCapsule   = (Radius, Radius, HalfHeight)
-  /// HorizontalCapsule = (Radius, Radius, HalfHeight)
-  /// Box               = (HalfExtentX, HalfExtentY, HalfExtentZ)
-  /// Sphere            = (Radius, Radius, Radius)
-  /// @attention Keep in mind that FCollisionShape does not differentiate between vertical and horizontal capsules.
-  ///
-  /// @param        CollisionShape     The collision shape we want an FCollisionShape for.
-  /// @param        Extent             The extent the FCollisionShape should have. Component values may be altered if the given vector does
-  ///                                  not constitute a valid extent (@see GetValidExtent).
-  /// @returns      FCollisionShape    The FCollisionShape equivalent to the passed EGenCollisionShape.
-  virtual FCollisionShape GetFrom(EGenCollisionShape CollisionShape, const FVector& Extent) const;
+	/// Generate an FCollisionShape with the passed extent from an EGenCollisionShape value. The extent format is as follows:
+	/// VerticalCapsule   = (Radius, Radius, HalfHeight)
+	/// HorizontalCapsule = (Radius, Radius, HalfHeight)
+	/// Box               = (HalfExtentX, HalfExtentY, HalfExtentZ)
+	/// Sphere            = (Radius, Radius, Radius)
+	/// @attention Keep in mind that FCollisionShape does not differentiate between vertical and horizontal capsules.
+	/// 从 EGenCollisionShape 值生成具有传递范围的 FCollisionShape。 范围格式如下：
+	/// VerticalCapsule = (Radius, Radius, HalfHeight)
+	/// HorizontalCapsule = (Radius, Radius, HalfHeight)
+	/// Box = (HalfExtentX, HalfExtentY, HalfExtentZ)
+	/// Sphere = (Radius, Radius, Radius)
+	/// @attention 请记住，FCollisionShape 不区分垂直和水平胶囊。
+	///
+	/// @param        CollisionShape     The collision shape we want an FCollisionShape for.
+	/// @param        Extent             The extent the FCollisionShape should have. Component values may be altered if the given vector does
+	///                                  not constitute a valid extent (@see GetValidExtent).
+	/// @returns      FCollisionShape    The FCollisionShape equivalent to the passed EGenCollisionShape.
+	virtual FCollisionShape GetFrom(EGenCollisionShape CollisionShape, const FVector& Extent) const;
 
   /// Adds the inherent rotation of the general capsule to the passed rotation if applicable. Useful when executing traces for a flat
   /// capsule with an FCollisionShape capsule.
@@ -884,6 +901,9 @@ public:
   /// components, no negative components and has the same values for components that refer to the same property (e.g. for a sphere all
   /// components have the same value representing the radius). For capsules the half height cannot be smaller than the radius. If there are
   /// different values for the same property in the passed vector the largest value will be chosen.
+  /// 返回传递的向量作为传递的碰撞形状的有效范围。
+  /// 一个有效的范围向量没有零或几乎为零的分量，没有负分量，并且对于引用相同属性的分量具有相同的值（例如，对于球体，所有分量都具有相同的值来表示半径）。
+  /// 对于胶囊，半高不能小于半径。 如果在传递的向量中有相同属性的不同值，则将选择最大值。
   ///
   /// @param        CollisionShape    The target collision type (must be a valid shape).
   /// @param        Extent            The extent to validate.
@@ -1177,14 +1197,23 @@ public:
   /// if "bInterpBoxY" is false, otherwise it is the Y-extent.
   /// @attention The new width is set through @see SetRootCollisionExtentSafe meaning no changes will be applied if the new extent would
   /// cause a blocking collision.
+  /// 将根碰撞的当前宽度向目标值线性插值。 对于垂直胶囊和球体，宽度是半径，对于扁平胶囊，它是类的半高属性。
+  /// 对于框碰撞，如果“bInterpBoxY”为假，则操作的值为 X 范围，否则为 Y 范围。
+  /// @attention 新宽度是通过@see SetRootCollisionExtentSafe 设置的，这意味着如果新范围会导致阻塞碰撞，则不会应用任何更改。
   ///
   /// @param        TargetWidth        The target value for the interpolation. Must be greater than 0.
+  ///								   插值的目标值。 必须大于 0。
   /// @param        InterpSpeed        How quickly the target value should be reached.
+  ///								   应该多快达到目标值。
   /// @param        InterpTolerance    Factor the test extent is scaled with (@see SetRootCollisionExtentSafe).
+  ///                                  测试范围的因子被缩放（@see SetRootCollisionExtentSafe）。
   /// @param        DeltaTime          The delta time to use. If <= 0 the currently set physics delta time will be used.
+  ///								   要使用的增量时间。 如果 <= 0，将使用当前设置的物理增量时间。
   /// @param        bInterpBoxY        Only relevant if the root collision is a box shape. If true the Y-extent of the box collision will be
   ///                                  interpolated instead of the X-extent.
+  ///                                  仅当根碰撞是盒子形状时才相关。 如果为真，则将插入框碰撞的 Y 范围而不是 X 范围。
   /// @returns      float              The absolute difference in width that was actually applied to the root collision shape.
+  ///								   实际应用于根碰撞形状的绝对宽度差。
   UFUNCTION(BlueprintCallable, Category = "General Movement Component")
   virtual float LerpRootCollisionWidth(
     float TargetWidth,
@@ -1199,10 +1228,19 @@ public:
   /// name if the root component already has the passed collision shape.
   /// @attention Some settings cannot be copied to the new root component and may have to be reapplied manually afterwards (walkable slope
   /// override, phys material override, max depenetration velocity, custom primitive data, asset user data).
+  /// 用传递的形状和范围中的一个新的替换 pawn 的当前根碰撞。 将采用当前组件设置（用于碰撞、物理、渲染等），并销毁原始根组件。
+  /// 如果根组件已经具有传递的碰撞形状，则仅更新范围和名称。
+  /// @attention 一些设置不能复制到新的根组件，并且可能必须在之后手动重新应用（可步行坡度覆盖、物理材料覆盖、最大穿透速度、自定义原始数据、资产用户数据）。
   ///
   /// @param        NewCollisionShape    The new collision type to use (must be a valid shape).
   /// @param        Extent               The extent of the new root component (@see GetRootCollisionExtent for the format). Component values
   ///                                    may be altered if the given vector does not constitute a valid extent (@see GetValidExtent).
+  ///	新根组件的范围（@see GetRootCollisionExtent 格式）。
+  ///	如果给定向量不构成有效范围（@see GetValidExtent），则可能会更改组件值。
+  ///	VerticalCapsule   = (Radius, Radius, HalfHeight)
+  ///	HorizontalCapsule = (Radius, Radius, HalfHeight)
+  ///	Box               = (HalfExtentX, HalfExtentY, HalfExtentZ)
+  ///	Sphere            = (Radius, Radius, Radius)
   /// @param        Name                 The name of the new root component. The new name must be unique and different from the name of the
   ///                                    root component when the actor was first spawned.
   /// @returns      USceneComponent*     The new root component. May be equal to the old root component if the pawn already had the passed
@@ -1215,6 +1253,12 @@ public:
   /// @param        NewCollisionShape    The new collision type to use (must be a valid shape).
   /// @param        Extent               The extent of the new root component (@see GetRootCollisionExtent for the format). Component values
   ///                                    may be altered if the given vector does not constitute a valid extent (@see GetValidExtent).
+  ///	新根组件的范围（@see GetRootCollisionExtent 格式）。
+  ///	如果给定向量不构成有效范围（@see GetValidExtent），则可能会更改组件值。
+  ///	VerticalCapsule   = (Radius, Radius, HalfHeight)
+  ///	HorizontalCapsule = (Radius, Radius, HalfHeight)
+  ///	Box               = (HalfExtentX, HalfExtentY, HalfExtentZ)
+  ///	Sphere            = (Radius, Radius, Radius)
   /// @param        Name                 The name of the new root component. The new name must be unique and different from the name of the
   ///                                    root component when the actor was first spawned.
   /// @param        Tolerance            When testing whether the new shape would cause a blocking collision, this argument is applied as a

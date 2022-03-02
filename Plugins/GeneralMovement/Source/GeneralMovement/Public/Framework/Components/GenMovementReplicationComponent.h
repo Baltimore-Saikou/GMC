@@ -489,11 +489,11 @@ enum class EInterpolationMethod : uint8
 UENUM(BlueprintType)
 enum class ENetworkPreset : uint8
 {
-  LAN UMETA(DisplayName = "LAN",ToolTip = "Local network with no latency and ideal network conditions.\n没有延迟和理想网络条件的本地网络。"),
-  Competitive UMETA(DisplayName = "Competitive", ToolTip = "Excellent network conditions with wired connections, low latencies (ping < 60 ms), minimal jitter and no packet loss.\n具有有线连接、低延迟（ping < 60 ms）、最小抖动和无数据包丢失的出色网络条件。"),
-  Regular UMETA(DisplayName = "Regular", ToolTip = "Average network conditions with stable connections, moderate latencies (ping < 100 ms), little jitter and tolerable packet loss (< 2%).\n平均网络条件，连接稳定、延迟适中（ping < 100 毫秒）、抖动小和可容忍的丢包率（< 2%）。"),
-  LowEnd UMETA(DisplayName = "Low-end", ToolTip = "Poor network conditions with potentially unstable connections, high latencies (up to 200 ms), noticeable jitter and serious packet loss (up to 5%).\n网络状况不佳，可能存在不稳定的连接、高延迟（高达 200 毫秒）、明显的抖动和严重的数据包丢失（高达 5%）。"),
-  Custom UMETA(DisplayName = "Custom", ToolTip = "User-defined configuration.\n用户定义的配置。"),
+  LAN UMETA(DisplayName = "LAN", ToolTip = "Local network with no latency and ideal network conditions. 没有延迟和理想网络条件的本地网络。"),
+  Competitive UMETA(DisplayName = "Competitive", ToolTip = "Excellent network conditions with wired connections, low latencies (ping < 60 ms), minimal jitter and no packet loss. 具有有线连接、低延迟（ping < 60 ms）、最小抖动和无数据包丢失的出色网络条件。"),
+  Regular UMETA(DisplayName = "Regular", ToolTip = "Average network conditions with stable connections, moderate latencies (ping < 100 ms), little jitter and tolerable packet loss (< 2%). 平均网络条件，连接稳定、延迟适中（ping < 100 毫秒）、抖动小和可容忍的丢包率（< 2%）。"),
+  LowEnd UMETA(DisplayName = "Low-end", ToolTip = "Poor network conditions with potentially unstable connections, high latencies (up to 200 ms), noticeable jitter and serious packet loss (up to 5%). 网络状况不佳，可能存在不稳定的连接、高延迟（高达 200 毫秒）、明显的抖动和严重的数据包丢失（高达 5%）。"),
+  Custom UMETA(DisplayName = "Custom", ToolTip = "User-defined configuration. 用户定义的配置。"),
   MAX UMETA(Hidden),
 };
 
@@ -532,6 +532,9 @@ public:
   /// are always editable.
   /// WARNING: Selecting any profile other than "Custom" will overwrite all current settings within the "Networking" category (including
   /// those in the "Replication" section).
+  /// 选择适合您定位的网络条件的预设。 这将加载适用于预设描述中概述的设置的预定义值。
+  /// 要使加载的值可编辑，请将配置文件更改为“自定义”。 复制选项始终是可编辑的。
+  /// 警告：选择“自定义”以外的任何配置文件将覆盖“Networking”类别中的所有当前设置（包括“Replication”部分中的设置）。
   ENetworkPreset NetworkPreset{ENetworkPreset::LAN};
 
   UFUNCTION(BlueprintCallable, Category = "General Movement Component")
@@ -1882,6 +1885,8 @@ protected:
   /// client value (if replicated) and will skip validation.
   /// ATTENTION: If this option is set to true, you should disable replication of the location for the server state of the autonomous proxy.
   /// Keep in mind that this has the effect that you can't change the location locally anymore inside the replicated tick function.
+  /// 赋予客户端关于其位置的权威性。 如果启用，服务器将直接从客户端值（如果已复制）设置参与者位置，并将跳过验证。
+  /// 注意：如果此选项设置为 true，则应禁用自主代理服务器状态的位置复制。 请记住，这具有您无法再在复制的刻度函数内本地更改位置的效果。
   bool bUseClientLocation{false};
 
   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Networking", meta =
@@ -1891,6 +1896,8 @@ protected:
   /// ATTENTION: If this option is set to true, you should disable replication of all rotation components for the server state of the
   /// autonomous proxy. Keep in mind that this has the effect that you can't change the rotation locally anymore inside the replicated tick
   /// function.
+  /// 赋予客户关于其旋转的权威性权力。 如果启用，服务器将直接从客户端值（如果复制）设置参与者旋转，并将跳过验证。
+  /// 注意：如果此选项设置为 true，您应该为自主代理的服务器状态禁用所有轮换组件的复制。 请记住，这具有您无法再在复制的刻度函数内本地更改旋转的效果。
   bool bUseClientRotation{false};
 
   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Networking", meta =
@@ -1900,24 +1907,29 @@ protected:
   /// ATTENTION: If this option is set to true, you should disable replication of all control rotation components for the server state of
   /// the autonomous proxy. Keep in mind that this has the effect that you can't change the control rotation locally anymore inside the
   /// replicated tick function.
+  /// 赋予客户关于其控制器旋转的权威性权力。 如果启用，服务器将直接从客户端值（如果复制）设置其控制器旋转，并将跳过验证。
+  /// 注意:如果将此选项设置为true，则应该禁用对自治代理的服务器状态的所有控制旋转组件的复制。请记住，这将导致您无法在复制的tick函数中在本地更改控制器旋转。
   bool bUseClientControlRotation{true};
 
   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Networking", meta =
     (EditCondition = "NetworkPreset == ENetworkPreset::Custom", ClampMin = "0.000001", UIMin = "1", UIMax = "10"))
   /// Compare tolerance for the replication of the actor location to the server. If the difference between two location values is greater
   /// than this tolerance, the moves will not be combined.
+  /// 比较actor位置复制到服务器的容差。 如果两个位置值之间的差异大于此容差，则不会合并移动。
   float LocationNetTolerance{5.f};
 
   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Networking", meta =
     (EditCondition = "NetworkPreset == ENetworkPreset::Custom", ClampMin = "0.000001", UIMin = "1", UIMax = "30"))
   /// Compare tolerance for the replication of the actor rotation to the server. If the difference between two rotation values is greater
   /// than this tolerance, the moves will not be combined.
+  /// 比较参与者轮换复制到服务器的容差。 如果两个旋转值之间的差异大于此容差，则不会合并移动。
   float RotationNetTolerance{10.f};
 
   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Networking", meta =
     (EditCondition = "NetworkPreset == ENetworkPreset::Custom", ClampMin = "0.000001", UIMin = "1", UIMax = "30"))
   /// Compare tolerance for the replication of the control rotation to the server. If the difference between two control rotation values is
   /// greater than this tolerance, the moves will not be combined.
+  /// 比较控制器旋转复制到服务器的容差。 如果两个控制器旋转值之间的差异大于此容差，则不会合并移动。
   float ControlRotationNetTolerance{10.f};
 
   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Networking", meta =
@@ -1927,6 +1939,9 @@ protected:
   /// below 1 / MaxServerDeltaTime so this value should not be too low (but also not too high because then you may get a large performance
   /// hit from physics sub-stepping). Cannot be smaller than the inverse of the client send rate (if it is the value will be increased to
   /// match the client send interval i.e. 1 / client send rate).
+  /// 客户端移动允许的最大增量时间。 如果两个客户端移动之间的时间大于此值，则增量时间将被限制（在客户端和服务器上）。
+  /// 这意味着如果客户端的帧速率低于 1 / MaxServerDeltaTime，客户端移动将有效减慢，因此该值不应太低（但也不能太高，
+  /// 因为这样您可能会从物理子步进中获得很大的性能影响）。 不能小于客户端发送速率的倒数（如果是，则该值将增加以匹配客户端发送间隔，即 1 / 客户端发送速率）。
   float MaxServerDeltaTime{0.05f};
 
   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Networking", meta =
@@ -1936,6 +1951,10 @@ protected:
   /// enqueue new moves). As this will not clamp the delta time of a client move, it can be set to small values without affecting the
   /// movement simulation (unlike the max server delta time). E.g. if you set this to 0.02 you will enqueue every move up to 50 fps. Cannot
   /// be greater than the max server delta time (will be lowered to match the max server delta time if it is).
+  /// 在必须将其排入移动队列之前，允许（组合）客户端移动的最大增量时间。 在某些情况下，您可能希望更频繁地对移动进行排队，
+  /// 以便服务器更快地获取更新（客户端发送速率仍然受到我们将新移动排队的速度限制）。 由于这不会限制客户端移动的增量时间，
+  /// 因此可以将其设置为较小的值而不影响移动模拟（与最大服务器增量时间不同）。
+  /// 例如, 如果您将其设置为 0.02，您将每次移动最多 50 fps。 不能大于最大服务器增量时间（如果是，将降低以匹配最大服务器增量时间）。
   float MaxClientDeltaTime{0.01f};
 
   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Networking", meta =
@@ -1943,44 +1962,53 @@ protected:
   /// How often per second the client will send data to the server. This is an upper bound i.e. the interval between two updates will never
   /// be lower than 1 / client send rate. However, more often than not it will be longer to save bandwidth if no important values changed on
   /// the client (moves will be combined). In this case the lower bound is determined by the max client delta time.
+  /// 客户端每秒向服务器发送数据的频率。 这是一个上限，即两次更新之间的间隔永远不会低于 1 / 客户端发送速率。
+  /// 但是，如果客户端上没有更改重要值（将合并移动），通常会更长时间节省带宽。 在这种情况下，下限由最大客户端增量时间确定。
   int32 ClientSendRate{100};
 
   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Networking", meta =
     (EditCondition = "NetworkPreset == ENetworkPreset::Custom", ClampMin = "2", UIMin = "32", UIMax = "256"))
   /// How many past moves the autonomous proxy is allowed to store at most. The appropriate value depends mostly on the network latency (a
   /// higher ping requires a larger move queue) but the net update frequency and client framerate need to be considered as well.
+  /// 自治代理最多允许存储多少过去的移动。 适当的值主要取决于网络延迟（更高的 ping 需要更大的移动队列），但也需要考虑网络更新频率和客户端帧率。
   int32 MoveQueueMaxSize{64};
 
   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Networking", meta =
     (EditCondition = "NetworkPreset == ENetworkPreset::Custom"))
   /// Only replay when moving. This can make corrections less noticeable for the client.
+  /// 仅在移动时重播。 这可以使客户的更正不太明显。
   bool bOnlyReplayWhenMoving{false};
 
   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Networking", meta =
     (EditCondition = "NetworkPreset == ENetworkPreset::Custom", ClampMin = "0.000001", UIMin = "0.1"))
   /// If the option to only replay when moving is enabled, this is the minimum velocity magnitude required before a replay is allowed to
   /// happen.
+  /// 如果启用仅在移动时重放的选项，则这是允许重放发生之前所需的最小速度幅度。
   float ReplaySpeedThreshold{10.0f};
 
   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Networking", AdvancedDisplay, meta =
     (EditCondition = "NetworkPreset == ENetworkPreset::Custom", ClampMin = "0.000001", UIMin = "0.1", UIMax = "10"))
   /// How much the client velocity is allowed to deviate from the server calculated velocity to still be considered valid. The velocity is
   /// checked with every replication update on the client.
+  /// 允许客户端速度偏离服务器计算速度多少仍被视为有效。 客户端上的每个复制更新都会检查速度。
   float MaxVelocityError{0.5f};
 
   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Networking", AdvancedDisplay, meta =
     (EditCondition = "NetworkPreset == ENetworkPreset::Custom", ClampMin = "0.000001", UIMin = "1", UIMax = "5"))
   /// How much the client location is allowed to deviate from the server calculated location to still be considered valid.
+  /// 允许客户端位置偏离服务器计算位置多少仍被视为有效。
   float MaxLocationError{1.f};
 
   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Networking", AdvancedDisplay, meta =
     (EditCondition = "NetworkPreset == ENetworkPreset::Custom", ClampMin = "0.000001", UIMin = "1", UIMax = "5"))
   /// How much the client actor rotation is allowed to deviate from the server calculated actor rotation to still be considered valid.
+  /// 允许客户端 Actor 旋转 偏离服务器计算的 Actor 旋转多少仍然被认为是有效的。
   float MaxRotationError{5.f};
 
   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Networking", AdvancedDisplay, meta =
     (EditCondition = "NetworkPreset == ENetworkPreset::Custom", ClampMin = "0.000001", UIMin = "1", UIMax = "5"))
   /// How much the client control rotation is allowed to deviate from the server calculated control rotation to still be considered valid.
+  /// 允许客户端控制器旋转与服务器计算的控制器旋转偏离多少仍被视为有效。
   float MaxControlRotationError{5.f};
 
   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Networking", AdvancedDisplay, meta =
@@ -1991,6 +2019,9 @@ protected:
   /// on the server, it will be locked for 10 ms and will ignore any further changes within that time frame. If this feature is disabled
   /// (i.e. min hold time is set to 0) and the bool changes immediately back to false again with the next move, the value "true" might not
   /// be replicated to other clients.
+  /// 仅与模拟代理服务器数据相关。 这决定了配置为在更改时强制进行网络更新的变量在刚刚更改时应该在服务器状态中保留多长时间，以确保在再次更改之前实际复制该值。
+  /// 布尔变量和最小保持时间为 0.01 的示例：当 bool 的值在服务器上从 false 更改为 true 时，它将被锁定 10 ms，并且将忽略该时间范围内的任何进一步更改。
+  /// 如果禁用此功能（即最小保持时间设置为 0），并且 bool 会在下一次移动时立即再次变为 false，则值“true”可能不会复制到其他客户端。
   float MinRepHoldTime{0.02f};
 
   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Networking", AdvancedDisplay, meta =
@@ -1998,6 +2029,8 @@ protected:
   /// If greater than 0 the server will fully serialize all data anew every "FullSerializationInterval" seconds. This is intended as a sort
   /// of fail-safe mechanism for pawn data replication. Only activate this if you notice client pawns remaining stuck in a wrong state in
   /// stand-alone builds (very rare and application specific).
+  /// 如果大于 0，服务器将每隔“FullSerializationInterval”秒重新完全序列化所有数据。 这是一种用于Pawn数据复制的故障安全机制。
+  /// 仅当您注意到客户端 pawn 在 stand-alone 构建中仍处于错误状态时才激活此功能（非常罕见且特定于应用程序）。
   float FullSerializationInterval{0.f};
 
   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Networking", AdvancedDisplay, meta =
@@ -2005,6 +2038,9 @@ protected:
   /// When enabled, the client will always replay its state upon receiving a server update. Enabling may cause a large performance hit and
   /// can sometimes introduce instabilities in the client state that would otherwise not occur. This option should generally be disabled
   /// except for testing purposes.
+  /// 启用后，客户端将始终在收到服务器更新时重播其状态。
+  /// 启用可能会导致较大的性能损失，并且有时会在客户端状态中引入不稳定性，否则不会发生。
+  /// 此选项通常应禁用，除非出于测试目的。
   bool bAlwaysReplay{false};
 
   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Networking", AdvancedDisplay, meta =
