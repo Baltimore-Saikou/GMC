@@ -18,7 +18,7 @@ struct GMC_API FMove_OrganicMovement : public FMove
     bSerializeInputVectorY = true;
     bSerializeInputVectorZ = true;
     bSerializeOutLocation = true;
-    bSerializeOutRotationRoll = false;
+    bSerializeOutRotationRoll = true;
     bSerializeOutRotationPitch = false;
     bSerializeOutRotationYaw = true;
     bSerializeOutControlRotationRoll = false;

@@ -1013,21 +1013,12 @@ void UGenMovementComponent::SetRootCollisionRotationSafe(const FQuat& NewRotatio
   const EGenCollisionShape CollisionShape = UGenMovementComponent::GetRootCollisionShape();
   const FVector CollisionExtent = GetRootCollisionExtent();
   FHitResult TestHit;
-  if (
-    !IsValidPosition(
-      CollisionShape,
-      CollisionExtent,
-      UpdatedComponent->GetComponentLocation(),
-      NewRotation,
-      TestHit,
-      UpdatedComponent->GetCollisionObjectType(),
-      Tolerance
-    )
-  )
+  if (!IsValidPosition(CollisionShape, CollisionExtent, UpdatedComponent->GetComponentLocation(), NewRotation, TestHit, UpdatedComponent->GetCollisionObjectType(), Tolerance))
   {
+  	UE_LOG(LogTemp, Error, TEXT("被阻挡"))
     return;
   }
-
+	UE_LOG(LogTemp, Log, TEXT("没有阻挡"))
   SetRootCollisionRotation(NewRotation);
 }
 

@@ -2113,23 +2113,29 @@ protected:
     (EditCondition = "NetworkPreset == ENetworkPreset::Custom"))
   /// Whether the server should verify the timestamps of the movement data received from the client. This increases security at the cost of
   /// some processing power.
+  /// 服务器是否应该验证从客户端接收到的移动数据的时间戳。 这以牺牲一些处理能力为代价提高了安全性。
   bool bVerifyClientTimestamps{false};
 
   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Networking|Verification", meta =
     (ClampMin = "0", UIMin = "0.04", UIMax = "0.12", EditCondition = "NetworkPreset == ENetworkPreset::Custom"))
   /// The maximum amount in seconds a client timestamp is allowed to differ from the server calculated one to still be considered valid.
   /// The appropriate value here depends on a lot of variables, try to find the lowest value that does not fail too many verifications.
+  /// 允许客户端时间戳与服务器计算出的仍被视为有效的最大数量（以秒为单位）不同。
+  /// 这里合适的值取决于很多变量，尽量找到不会失败太多验证的最低值。
   float MaxAllowedTimestampDeviation{0.08f};
 
   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Networking|Verification", meta =
     (ClampMin = "0", UIMin = "0", UIMax = "10", EditCondition = "NetworkPreset == ENetworkPreset::Custom"))
   /// The maximum number of strikes a client is allowed to receive within the time interval of two resets. If this number is exceeded moves
   /// will be rejected immediately for the remainder of the interval whenever they fail to verify.
+  /// 允许客户端在两次重置的时间间隔内接收的最大 strikes 次数。
+  /// 如果超过此数量，则只要未能验证，移动将在剩余的时间间隔内立即被拒绝。
   int32 MaxStrikeCount{2};
 
   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Networking|Verification", meta =
     (ClampMin = "0", UIMin = "1", UIMax = "60", EditCondition = "NetworkPreset == ENetworkPreset::Custom"))
   /// The time interval for resetting the client strike count.
+  /// 重置客户端strike计数的时间间隔。
   float StrikeResetInterval{10.f};
 
 #pragma endregion
@@ -2343,6 +2349,15 @@ protected:
   /// estimation for an appropriate simulation delay would be to double whatever the value of the current preset is. You can also change the
   /// simulation delay for all remotely controlled pawns on a machine directly in-game by using the "SetInterpolationDelay" console command
   /// (may break server pawn rollback). The simulation delay is only relevant when the interpolation method is not "None".
+  /// 远程控制的棋子在本地机器上显示多远（以秒为单位）。较低的值显然更“实时”，但可能会在糟糕的网络条件下产生不令人满意的结果。
+  /// 值越大，对数据包丢失、延迟峰值和更高的 ping 的容忍度就越大，但远程控制的 pawn 过去在本地机器上更远。通常，您期望的网络条件越好，您可以设置此值越低。
+  /// 请记住，该系统基于创建原始移动的机器的世界时间。您需要考虑一个数据包从一个客户端到达另一个客户端所需的最长时间（即两个最高的客户端 ping 加起来）。
+  /// 当运行只接受一个客户端连接的侦听服务器时，您只需考虑该连接的延迟，这将在大多数情况下大大减少所需的模拟延迟。
+  /// 对于高级用户：模拟延迟是一个本地属性，可以在运行时基于 ping 为每台机器单独配置此属性，但请注意，如果处理不当，这可能会破坏服务器 pawn 回滚。
+  /// 注意：网络预设是为只接受一个客户端连接的服务器量身定制的（例如合作游戏，其中一名玩家作为监听服务器托管，只有一名其他玩家可以作为客户端加入）。
+  /// 如果您想支持多个客户端连接，无论当前预设的值是多少，对适当模拟延迟的估计都将是两倍。
+  /// 您还可以使用“SetInterpolationDelay”控制台命令直接在游戏中更改机器上所有远程控制的 pawn 的模拟延迟（可能会中断服务器 pawn 回滚）。
+  /// 仅当 @see InterpolationMethod 不是“None”时，模拟延迟才相关。
   float SimulationDelay{0.15f};
 
   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Networking|Smoothing", meta =
@@ -2350,6 +2365,9 @@ protected:
   /// The method of interpolation used to smooth the movement of remotely controlled pawns. If set to "None" interpolation is disabled
   /// and pawns will always be set to their most recently received server state (completely ignoring the simulation delay) which assures the
   /// lowest latency possible but may cause jittery visuals.
+  /// 用于平滑遥控棋子移动的插值方法。
+  /// 如果设置为“无”，则禁用插值，并且 pawn 将始终设置为其最近收到的服务器状态（完全忽略模拟延迟），
+  /// 这可确保尽可能低的延迟，但可能会导致视觉抖动。
   EInterpolationMethod InterpolationMethod{EInterpolationMethod::Linear};
 
   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Networking|Smoothing", meta =
@@ -2357,12 +2375,17 @@ protected:
   /// The max size of the array containing the saved pawn states for interpolation and rollback i.e. how many past states we want to store
   /// before starting to delete the oldest ones. Greater network latency requires a larger state queue, as does a larger simulation delay
   /// (other factors may need to be considered as well).
+  /// 包含用于插值和回滚的已保存 pawn 状态的数组的最大大小，即在开始删除最旧的状态之前我们想要存储多少过去的状态。
+  /// 更大的网络延迟需要更大的状态队列，更大的模拟延迟也是如此（可能还需要考虑其他因素）。
   int32 StateQueueMaxSize{128};
 
   UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Networking|Smoothing", meta =
     (EditCondition = "NetworkPreset == ENetworkPreset::Custom"))
   /// Whether extrapolation is allowed when no recent enough state data is available. At best this can cover up small lag spikes without any
   /// noticeable disruption. At worst, it can cause severe rubberbanding and possibly pawns going through blocking objects.
+  /// 当没有足够的最新状态数据可用时是否允许外推。
+  /// 充其量，这可以掩盖小的滞后峰值，而不会造成任何明显的中断。
+  /// 在最坏的情况下，它会导致严重的橡皮筋和可能的棋子穿过阻挡物体。
   bool bAllowExtrapolation{false};
 
 #pragma endregion

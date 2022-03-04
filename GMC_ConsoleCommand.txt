@@ -1,5 +1,8 @@
-显示地板检测射线
+显示地板检测射线(0 ~ 1)
 gmc.ShowFloorSweep 1
 
-显示服务段纠正碰撞
+显示服务段纠正碰撞(0 ~ 1)
 p.NetShowCorrections 1
+
+对单个端进行延迟设置
+SetInterpolationDelay 0.5
